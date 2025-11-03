@@ -13,7 +13,55 @@ Route::middleware([
     ValidateSessionWithWorkOS::class,
 ])->group(function () {
     Route::get('dashboard', function () {
-        return Inertia::render('dashboard');
+        $totalCustomers = \App\Models\Customer::count();
+        $totalExperts = \App\Models\Expert::where('status', 'active')->count();
+        $upcomingAppointmentsCount = \App\Models\Appointment::where('scheduled_at', '>', now())
+            ->where('status', '!=', 'cancelled')
+            ->count();
+        $todayAppointmentsCount = \App\Models\Appointment::whereDate('scheduled_at', today())
+            ->where('status', '!=', 'cancelled')
+            ->count();
+
+        $expertsWithUpcomingAppointments = \App\Models\Expert::with(['appointments' => function ($query) {
+            $query->where('scheduled_at', '>', now())
+                ->where('status', '!=', 'cancelled')
+                ->orderBy('scheduled_at', 'asc')
+                ->limit(3)
+                ->with('customer');
+        }])
+            ->whereHas('appointments', function ($query) {
+                $query->where('scheduled_at', '>', now())
+                    ->where('status', '!=', 'cancelled');
+            })
+            ->where('status', 'active')
+            ->get()
+            ->map(function ($expert) {
+                return [
+                    'id' => $expert->id,
+                    'name' => $expert->name,
+                    'specialty' => $expert->specialty,
+                    'email' => $expert->email,
+                    'upcoming_appointments' => $expert->appointments->map(function ($appointment) {
+                        return [
+                            'id' => $appointment->id,
+                            'scheduled_at' => $appointment->scheduled_at->toISOString(),
+                            'customer_name' => $appointment->customer->name,
+                            'duration_minutes' => $appointment->duration_minutes,
+                            'status' => $appointment->status,
+                        ];
+                    }),
+                ];
+            });
+
+        return Inertia::render('dashboard', [
+            'statistics' => [
+                'total_customers' => $totalCustomers,
+                'total_experts' => $totalExperts,
+                'upcoming_appointments' => $upcomingAppointmentsCount,
+                'today_appointments' => $todayAppointmentsCount,
+            ],
+            'experts_with_appointments' => $expertsWithUpcomingAppointments,
+        ]);
     })->name('dashboard');
 
     Route::get('/experts', [\App\Http\Controllers\ExpertController::class, 'index'])->name('experts.index');
