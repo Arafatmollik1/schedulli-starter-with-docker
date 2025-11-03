@@ -5,6 +5,22 @@ FROM node:20-alpine
 ARG UID=1000
 ARG GID=1000
 
+# Install PHP CLI and Composer for wayfinder type generation (development only)
+RUN apk add --no-cache \
+    php-cli \
+    php-openssl \
+    php-phar \
+    php-tokenizer \
+    php-json \
+    php-mbstring \
+    php-xml \
+    php-dom \
+    php-fileinfo \
+    php-iconv \
+    curl \
+    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
+    && chmod +x /usr/local/bin/composer
+
 # Create user matching host UID/GID
 RUN deluser node 2>/dev/null || true \
     && addgroup -g ${GID} node \

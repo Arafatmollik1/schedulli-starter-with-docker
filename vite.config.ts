@@ -20,4 +20,15 @@ export default defineConfig({
     esbuild: {
         jsx: 'automatic',
     },
+    server: {
+        host: process.env.VITE_HOST || '0.0.0.0',
+        port: Number(process.env.VITE_PORT) || 5173,
+        hmr: {
+            host: process.env.VITE_HMR_HOST || 'localhost',
+            port: Number(process.env.VITE_HMR_PORT) || Number(process.env.APP_PORT) || 8000,
+        },
+        watch: {
+            usePolling: true,
+        },
+    },
 });

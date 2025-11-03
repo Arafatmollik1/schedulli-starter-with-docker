@@ -70,6 +70,8 @@ services:
       - NODE_ENV=development
       - VITE_HOST=0.0.0.0
       - VITE_PORT=5173
+      - VITE_HMR_HOST=localhost
+      - VITE_HMR_PORT=${APP_PORT:-8000}
     ports:
       - "5173:5173"
     command: npm run dev
@@ -122,6 +124,7 @@ services:
     environment:
       - APP_ENV=local
       - APP_DEBUG=true
+      - SKIP_SETUP=true
       - DB_CONNECTION=pgsql
       - DB_HOST=db
       - DB_PORT=5432
