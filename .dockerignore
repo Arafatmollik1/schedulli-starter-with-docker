@@ -30,4 +30,5 @@ tests
 docker-compose*.yml
 Dockerfile*
 docker/
-
+!docker/entrypoint.sh
+!docker/nginx/prod.conf
