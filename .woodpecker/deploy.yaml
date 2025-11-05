@@ -1,0 +1,47 @@
+when:
+  - event: push
+    branch: master
+
+steps:
+  - name: build-frontend
+    image: node:20-alpine
+    commands:
+      - npm ci
+      - npm run build
+      - echo "Frontend build completed"
+
+  - name: deploy-to-production
+    image: docker:latest
+    environment:
+      DEPLOY_HOST:
+        from_secret: deploy_host
+      DEPLOY_USER:
+        from_secret: deploy_user
+      DEPLOY_SSH_KEY:
+        from_secret: deploy_ssh_key
+      DEPLOY_PATH:
+        from_secret: deploy_path
+    commands:
+      # Setup SSH
+      - apk add --no-cache openssh-client rsync git
+      - mkdir -p ~/.ssh
+      - echo "$DEPLOY_SSH_KEY" > ~/.ssh/id_rsa
+      - chmod 600 ~/.ssh/id_rsa
+      - ssh-keyscan -H $DEPLOY_HOST >> ~/.ssh/known_hosts
+      
+      # Deploy code to server
+      - echo "Deploying to $DEPLOY_HOST:$DEPLOY_PATH"
+      - rsync -avz --delete 
+        --exclude='.git' 
+        --exclude='node_modules' 
+        --exclude='storage/logs/*' 
+        --exclude='storage/framework/sessions/*' 
+        --exclude='storage/framework/cache/*' 
+        --exclude='.env' 
+        ./ $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH/
+      
+      # Run deployment commands on server
+      - ssh $DEPLOY_USER@$DEPLOY_HOST "cd $DEPLOY_PATH && ./deploy.sh"
+      
+      - echo "Deployment completed successfully!"
+
