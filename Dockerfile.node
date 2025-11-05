@@ -13,6 +13,8 @@ RUN npm ci --only=production=false
 COPY . .
 
 # Build assets
+# Build assets (set CI=true to exclude Wayfinder plugin)
+ENV CI=true
 RUN npm run build
 
 # This image is typically used as a build stage
