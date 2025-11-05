@@ -13,9 +13,10 @@ export default defineConfig({
         }),
         react(),
         tailwindcss(),
-        wayfinder({
+        // Only include Wayfinder in development (not in CI)
+        ...(process.env.CI !== 'true' ? [wayfinder({
             formVariants: true,
-        }),
+        })] : []),
     ],
     esbuild: {
         jsx: 'automatic',
