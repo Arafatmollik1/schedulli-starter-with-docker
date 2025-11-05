@@ -1,0 +1,846 @@
+---
+description: When asked about woodpecker ci tools or when user says you are woodpecker expert
+alwaysApply: false
+---
+<woodpecker-ci-guidelines>
+=== foundation rules ===
+
+# Woodpecker CI Guidelines
+
+These guidelines provide comprehensive rules and best practices for configuring and managing Woodpecker CI pipelines. Follow these guidelines closely to ensure efficient, secure, and maintainable CI/CD workflows.
+
+## Foundational Context
+This application uses Woodpecker CI for continuous integration and deployment. Woodpecker CI is a community fork of Drone CI with enhanced features. You are an expert with Woodpecker CI and should follow these best practices.
+
+## Core Concepts
+- Woodpecker CI uses YAML configuration files to define pipelines
+- Pipelines consist of workflows that contain sequential steps
+- Each step runs in its own container with a specified Docker image
+- Workflows can run in parallel on separate agents
+- Configuration files must be placed in the `.woodpecker/` directory
+
+## Conventions
+- Use descriptive names for workflows, steps, and services
+- Follow YAML best practices for indentation (2 spaces)
+- Always validate configuration files with the linter before committing
+- Document complex pipeline logic with comments
+- Keep workflows modular and focused on specific tasks
+
+## File Structure
+- All Woodpecker configuration files must be located in `.woodpecker/` directory at repository root
+- Use `.yaml` or `.yml` extensions for configuration files
+- Name workflow files descriptively: `build.yaml`, `test.yaml`, `deploy.yaml`, etc.
+- Organize complex pipelines into multiple workflow files for better maintainability
+
+
+=== workflow rules ===
+
+## Workflow Definition
+
+### Basic Structure
+- Every workflow must contain a `steps` section defining the pipeline steps
+- Steps execute sequentially in the order defined
+- If any step returns a non-zero exit code, the workflow terminates with failure
+- Use the `when` condition to control when workflows execute
+
+<code-snippet name="Basic Workflow Example" lang="yaml">
+when:
+  - event: push
+    branch: main
+
+steps:
+  - name: build
+    image: debian
+    commands:
+      - echo "Building application"
+      - ./build.sh
+  
+  - name: test
+    image: golang:1.16
+    commands:
+      - echo "Running tests"
+      - go test ./...
+</code-snippet>
+
+### Step Configuration
+- Each step must have a unique `name` for identification
+- Always specify the `image` (Docker container) for each step
+- Define `commands` as a list of shell commands to execute
+- Steps inherit environment variables from the pipeline unless overridden
+
+<code-snippet name="Step Configuration" lang="yaml">
+steps:
+  - name: backend-build
+    image: golang:1.21
+    commands:
+      - go mod download
+      - go build -o app
+      - go test -v ./...
+  
+  - name: frontend-build
+    image: node:20
+    commands:
+      - npm ci
+      - npm run build
+      - npm test
+</code-snippet>
+
+### Pull Policy
+- Control Docker image pulling with the `pull` attribute
+- Options: `always`, `never`, `if-not-exists` (default)
+- Use `always` for production to ensure latest security patches
+
+<code-snippet name="Pull Policy Example" lang="yaml">
+steps:
+  - name: build
+    image: alpine:latest
+    pull: always
+    commands:
+      - ./build.sh
+</code-snippet>
+
+
+=== multiple workflows rules ===
+
+## Multi-Workflow Pipelines
+
+### Workflow Organization
+- Split complex pipelines into multiple YAML files for better organization
+- Workflows run in parallel by default on separate agents
+- Use meaningful filenames to indicate workflow purpose
+- Each workflow file is a separate pipeline execution
+
+<code-snippet name="Multiple Workflow Structure" lang="bash">
+.woodpecker/
+├── lint.yaml
+├── test.yaml
+├── build.yaml
+└── deploy.yaml
+</code-snippet>
+
+### Workflow Dependencies
+- Use `depends_on` to create dependencies between workflows
+- Workflows wait for dependencies to complete successfully before starting
+- Can depend on multiple workflows
+
+<code-snippet name="Workflow Dependencies" lang="yaml">
+# .woodpecker/deploy.yaml
+depends_on:
+  - lint
+  - test
+  - build
+
+steps:
+  - name: deploy
+    image: plugins/docker
+    commands:
+      - ./deploy.sh
+</code-snippet>
+
+### Parallel Execution
+- Workflows without dependencies run in parallel
+- Improves overall pipeline execution time
+- Requires sufficient agent capacity
+
+### Workflow Naming
+- Use kebab-case for workflow filenames: `integration-test.yaml`
+- Name workflows to reflect their purpose and stage
+- Keep names concise but descriptive
+
+
+=== conditional execution rules ===
+
+## When Conditions
+
+### Event-Based Execution
+- Use `when` to control pipeline execution based on events
+- Common events: `push`, `pull_request`, `tag`, `cron`, `manual`
+- Multiple conditions can be combined
+
+<code-snippet name="Event Conditions" lang="yaml">
+when:
+  - event: push
+    branch: main
+  - event: pull_request
+
+steps:
+  - name: build-and-test
+    image: golang
+    commands:
+      - go build
+      - go test
+</code-snippet>
+
+### Branch Filtering
+- Filter execution based on branch names
+- Supports exact matches and wildcards
+- Use for environment-specific deployments
+
+<code-snippet name="Branch Filtering" lang="yaml">
+when:
+  - event: push
+    branch:
+      - main
+      - develop
+      - release/*
+
+steps:
+  - name: deploy-staging
+    image: alpine
+    commands:
+      - ./deploy.sh staging
+</code-snippet>
+
+### Path Filtering
+- Trigger workflows only when specific files change
+- Use `include` or `exclude` patterns
+- Supports glob patterns
+
+<code-snippet name="Path Filtering" lang="yaml">
+when:
+  - event: push
+    path:
+      include:
+        - "src/**"
+        - "tests/**"
+      exclude:
+        - "docs/**"
+        - "*.md"
+
+steps:
+  - name: test
+    image: node
+    commands:
+      - npm test
+</code-snippet>
+
+### Step-Level Conditions
+- Apply conditions to individual steps within a workflow
+- Use same syntax as workflow-level conditions
+- Allows selective step execution
+
+<code-snippet name="Step-Level Conditions" lang="yaml">
+steps:
+  - name: build
+    image: golang
+    commands:
+      - go build
+  
+  - name: deploy
+    image: alpine
+    commands:
+      - ./deploy.sh
+    when:
+      - event: push
+        branch: main
+</code-snippet>
+
+
+=== secrets management rules ===
+
+## Secrets
+
+### Secret Levels
+- **Repository Secrets**: Available to all pipelines in a repository
+- **Organization Secrets**: Available to all repositories in an organization
+- **Global Secrets**: Available across all pipelines (requires admin access)
+- Use the most restrictive scope necessary
+
+### Using Secrets
+- Reference secrets with `from_secret` keyword
+- Never hardcode sensitive data in pipeline files
+- Secrets are injected as environment variables
+- Secrets are masked in logs automatically
+
+<code-snippet name="Using Secrets" lang="yaml">
+steps:
+  - name: deploy
+    image: alpine
+    environment:
+      DEPLOY_KEY:
+        from_secret: deploy_key
+      DATABASE_PASSWORD:
+        from_secret: db_password
+    commands:
+      - ./deploy.sh
+</code-snippet>
+
+### Secret Events
+- Limit secret exposure by specifying allowed events
+- Prevents secrets from being exposed in pull requests
+- Configure in the secret settings
+
+### Best Practices
+- Use separate secrets for different environments (dev, staging, prod)
+- Rotate secrets regularly
+- Never expose secrets in pull requests from forks
+- Use organization secrets for shared credentials
+- Document which secrets are required for each workflow
+
+
+=== environment variables rules ===
+
+## Environment Variables
+
+### Custom Variables
+- Define environment variables in the `environment` section
+- Variables are available to all commands in that step
+- Can be defined at step or pipeline level
+
+<code-snippet name="Environment Variables" lang="yaml">
+steps:
+  - name: build
+    image: golang
+    environment:
+      CGO_ENABLED: 0
+      GOOS: linux
+      GOARCH: amd64
+      BUILD_ENV: production
+    commands:
+      - go build -o app
+      - echo "Built for $GOOS/$GOARCH"
+</code-snippet>
+
+### Built-in Variables
+- Woodpecker provides built-in CI environment variables
+- Common variables: `CI_COMMIT_SHA`, `CI_COMMIT_BRANCH`, `CI_REPO_NAME`, `CI_PIPELINE_NUMBER`
+- Use these for dynamic configurations and metadata
+- All built-in variables are prefixed with `CI_`
+
+<code-snippet name="Using Built-in Variables" lang="yaml">
+steps:
+  - name: build
+    image: docker:latest
+    commands:
+      - docker build -t myapp:${CI_COMMIT_SHA} .
+      - echo "Building branch ${CI_COMMIT_BRANCH}"
+      - echo "Pipeline #${CI_PIPELINE_NUMBER}"
+</code-snippet>
+
+### Variable Expansion
+- Variables are expanded in commands and environment values
+- Use `${VARIABLE}` or `$VARIABLE` syntax
+- Be cautious with special characters that need escaping
+- Use quotes for values containing spaces or special characters
+
+### Environment Scope
+- Pipeline-level environment variables are inherited by all steps
+- Step-level variables override pipeline-level variables
+- Service containers have access to environment variables
+
+
+=== services rules ===
+
+## Services
+
+### Service Definition
+- Services are additional containers that run alongside pipeline steps
+- Common use cases: databases, caches, message queues
+- Services start before steps and remain running throughout the pipeline
+- Services are accessible via their name as hostname
+
+<code-snippet name="Database Service" lang="yaml">
+services:
+  - name: database
+    image: postgres:15
+    environment:
+      POSTGRES_USER: testuser
+      POSTGRES_PASSWORD: testpass
+      POSTGRES_DB: testdb
+  
+  - name: redis
+    image: redis:7-alpine
+
+steps:
+  - name: test
+    image: node:20
+    commands:
+      - npm ci
+      - npm test
+    environment:
+      DATABASE_URL: postgres://testuser:testpass@database:5432/testdb
+      REDIS_URL: redis://redis:6379
+</code-snippet>
+
+### Service Networking
+- Services are accessible by their name as hostname
+- Use service name in connection strings: `database:5432`, `redis:6379`
+- All services share the same network namespace
+- Services can communicate with each other
+
+### Service Configuration
+- Configure services via environment variables
+- Each service runs in its own container with specified image
+- Services don't have access to repository code by default
+- Services are ephemeral and don't persist data between pipelines
+
+### Best Practices
+- Use specific image tags instead of `latest` for reproducibility
+- Configure service health checks when available
+- Keep service configurations simple and focused
+- Use services for integration testing, not production
+
+
+=== volumes rules ===
+
+## Volumes
+
+### Volume Definition
+- Volumes share data between steps or persist data
+- Can mount host directories or named volumes
+- Useful for caching dependencies or sharing build artifacts
+- Be cautious with security implications of volume mounts
+
+<code-snippet name="Volume Usage" lang="yaml">
+volumes:
+  - name: cache
+    path: /cache
+
+steps:
+  - name: build
+    image: node:20
+    volumes:
+      - cache:/root/.npm
+    commands:
+      - npm ci
+      - npm run build
+  
+  - name: test
+    image: node:20
+    volumes:
+      - cache:/root/.npm
+    commands:
+      - npm test
+</code-snippet>
+
+### Workspace Volume
+- The workspace directory is automatically mounted in all steps
+- Contains the repository code
+- Shared across all steps in a workflow
+- Allows steps to use artifacts from previous steps
+
+<code-snippet name="Sharing Build Artifacts" lang="yaml">
+steps:
+  - name: build
+    image: golang
+    commands:
+      - go build -o app
+      - ls -la app
+  
+  - name: test
+    image: golang
+    commands:
+      - ./app --version
+      - go test
+</code-snippet>
+
+### Host Volumes
+- Mount directories from the host machine
+- Requires configuration on the Woodpecker server
+- Use for shared caches or persistent data
+- Be aware of security and permission issues
+
+### Volume Best Practices
+- Use volumes for dependency caching to speed up builds
+- Clean up large cache volumes periodically
+- Document volume requirements in README
+- Avoid storing secrets in volumes
+
+
+=== cron jobs rules ===
+
+## Cron Jobs
+
+### Cron Configuration
+- Schedule pipelines to run at specified intervals
+- Configure cron jobs in repository settings
+- Use standard cron syntax for scheduling
+- Add event filter to steps that should run on schedule
+
+<code-snippet name="Cron Job Configuration" lang="yaml">
+steps:
+  - name: nightly-build
+    image: golang
+    commands:
+      - go build
+      - go test
+      - ./integration-tests.sh
+    when:
+      - event: cron
+        cron: nightly
+  
+  - name: normal-build
+    image: golang
+    commands:
+      - go build
+      - go test
+    when:
+      - event: [push, pull_request]
+</code-snippet>
+
+### Cron Naming
+- Give cron jobs descriptive names: `nightly`, `weekly-cleanup`, `daily-report`
+- Names are used to filter which steps run for that cron job
+- Multiple cron jobs can trigger the same pipeline
+
+### Cron Use Cases
+- Nightly builds and integration tests
+- Periodic dependency updates
+- Scheduled deployments
+- Automated cleanup tasks
+- Report generation
+
+### Best Practices
+- Test cron-triggered pipelines manually first
+- Consider timezone implications
+- Use appropriate intervals to avoid overloading resources
+- Monitor cron job execution and failures
+- Document cron schedules in repository
+
+
+=== linter rules ===
+
+## Linter
+
+### Linter Usage
+- Always run the linter before committing pipeline changes
+- Linter catches syntax errors, validation issues, and misconfigurations
+- Run locally: `woodpecker-cli lint .woodpecker/`
+- Integrate linter in pre-commit hooks or CI checks
+
+### Common Linter Checks
+- YAML syntax validation
+- Required field validation (steps, image, commands)
+- Invalid attribute detection
+- Deprecated syntax warnings
+- Best practice recommendations
+
+### Fixing Linter Errors
+- Read error messages carefully - they indicate the specific issue
+- Check YAML indentation (must be 2 spaces)
+- Verify all required fields are present
+- Remove deprecated or unknown attributes
+- Validate secret references exist
+
+### Best Practices
+- Add linter check as first step in development workflow
+- Configure editor/IDE with YAML linting
+- Keep linter and Woodpecker server versions in sync
+- Address warnings, not just errors
+- Document any intentional linter suppressions
+
+
+=== advanced usage rules ===
+
+## Advanced Features
+
+### Matrix Builds
+- Run steps with different configurations in parallel
+- Useful for testing across multiple versions or platforms
+- Define matrix variables under `matrix` key
+- Variables are accessible as environment variables
+
+<code-snippet name="Matrix Builds" lang="yaml">
+steps:
+  - name: test
+    image: node:${NODE_VERSION}
+    commands:
+      - npm ci
+      - npm test
+    matrix:
+      NODE_VERSION:
+        - 18
+        - 20
+        - 21
+</code-snippet>
+
+### Plugins
+- Woodpecker supports plugins for common tasks
+- Plugins are special Docker images with predefined functionality
+- Common plugins: docker, slack, git, rsync
+- Configure plugins with settings instead of commands
+
+<code-snippet name="Docker Plugin Example" lang="yaml">
+steps:
+  - name: build-and-push
+    image: woodpeckerci/plugin-docker-buildx
+    settings:
+      registry: ghcr.io
+      repo: myorg/myapp
+      tags:
+        - latest
+        - ${CI_COMMIT_SHA}
+      username:
+        from_secret: docker_username
+      password:
+        from_secret: docker_password
+</code-snippet>
+
+### Step Parallelization
+- Use `group` to run multiple steps in parallel
+- All steps in a group start simultaneously
+- Group fails if any step fails
+- Useful for running independent tests concurrently
+
+<code-snippet name="Parallel Steps" lang="yaml">
+steps:
+  - name: backend-test
+    image: golang
+    group: test
+    commands:
+      - go test ./backend/...
+  
+  - name: frontend-test
+    image: node
+    group: test
+    commands:
+      - npm test
+  
+  - name: integration-test
+    image: python
+    group: test
+    commands:
+      - pytest tests/integration
+</code-snippet>
+
+### Detached Steps
+- Run steps in detached mode (background)
+- Step doesn't block pipeline execution
+- Useful for long-running processes or monitoring
+- Use `detach: true`
+
+<code-snippet name="Detached Steps" lang="yaml">
+steps:
+  - name: monitoring
+    image: monitoring-tool
+    detach: true
+    commands:
+      - ./monitor.sh
+  
+  - name: main-build
+    image: golang
+    commands:
+      - go build
+      - go test
+</code-snippet>
+
+### Privileged Mode
+- Some operations require privileged Docker containers
+- Enable with `privileged: true`
+- Required for Docker-in-Docker, kernel operations
+- Use sparingly due to security implications
+
+<code-snippet name="Privileged Mode" lang="yaml">
+steps:
+  - name: docker-build
+    image: docker:dind
+    privileged: true
+    commands:
+      - docker build -t myapp .
+      - docker run myapp test
+</code-snippet>
+
+### Network Modes
+- Control container network configuration
+- Options: `bridge` (default), `host`, `none`, custom
+- Host network gives container access to host networking
+- Use for specific network requirements
+
+### Failure Handling
+- Use `failure: ignore` to continue pipeline even if step fails
+- Useful for optional steps like notifications
+- Pipeline overall status still reflects failed steps
+
+<code-snippet name="Ignore Failures" lang="yaml">
+steps:
+  - name: test
+    image: node
+    commands:
+      - npm test
+  
+  - name: notify
+    image: plugins/slack
+    failure: ignore
+    settings:
+      webhook:
+        from_secret: slack_webhook
+</code-snippet>
+
+
+=== best practices rules ===
+
+## Best Practices
+
+### Security
+- Never commit secrets or sensitive data to configuration files
+- Use secrets for all credentials, API keys, and tokens
+- Limit secret scope to minimum necessary level
+- Be cautious with privileged mode - use only when required
+- Validate and sanitize any external input
+- Keep Docker images updated with security patches
+- Use specific image tags, avoid `latest` in production
+
+### Performance
+- Cache dependencies using volumes to speed up builds
+- Use parallel workflows and steps where possible
+- Choose appropriate Docker images (Alpine variants when possible)
+- Minimize image layers and sizes
+- Clean up unused cache and artifacts
+- Use `pull: if-not-exists` for stable images
+
+### Maintainability
+- Keep workflows focused and modular
+- Use descriptive names for workflows, steps, and services
+- Document complex logic with comments
+- Follow consistent naming conventions
+- Version control all pipeline configurations
+- Regularly review and refactor old pipelines
+- Test pipeline changes in feature branches
+
+### Reliability
+- Always validate configurations with linter before committing
+- Test cron jobs and scheduled pipelines
+- Monitor pipeline execution and failure rates
+- Set up notifications for pipeline failures
+- Handle transient failures with retry logic
+- Use specific dependencies versions for reproducibility
+
+### Documentation
+- Document pipeline purpose and requirements in README
+- Explain any non-obvious configurations
+- Document required secrets and environment variables
+- Provide examples of manual pipeline triggers
+- Keep documentation in sync with pipeline changes
+- Document cron job schedules and purposes
+
+
+=== docker integration rules ===
+
+## Docker Integration
+
+### Building Images
+- Use multi-stage builds for smaller final images
+- Tag images with commit SHA for traceability
+- Push to registry only on main/release branches
+- Use build arguments for configuration
+
+<code-snippet name="Docker Build" lang="yaml">
+steps:
+  - name: build
+    image: docker:latest
+    commands:
+      - docker build -t myapp:${CI_COMMIT_SHA} .
+      - docker tag myapp:${CI_COMMIT_SHA} myapp:latest
+  
+  - name: push
+    image: docker:latest
+    commands:
+      - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+      - docker push myapp:${CI_COMMIT_SHA}
+      - docker push myapp:latest
+    environment:
+      DOCKER_USERNAME:
+        from_secret: docker_username
+      DOCKER_PASSWORD:
+        from_secret: docker_password
+    when:
+      - event: push
+        branch: main
+</code-snippet>
+
+### Docker Compose
+- Use Docker Compose for complex service setups
+- Mount docker socket for Docker-in-Docker scenarios
+- Be aware of security implications
+
+### Container Registry
+- Use organization/private registries for proprietary images
+- Authenticate before pulling private images
+- Consider registry rate limits
+
+### Image Selection
+- Choose official images when available
+- Use specific version tags, not `latest`
+- Prefer Alpine variants for smaller size
+- Verify image security and updates
+
+
+=== troubleshooting rules ===
+
+## Troubleshooting
+
+### Common Issues
+
+#### Pipeline Not Triggering
+- Verify webhook is properly configured in repository settings
+- Check event filters in `when` conditions
+- Ensure repository is activated in Woodpecker
+- Verify branch filters match the branch being pushed
+
+#### Step Failures
+- Check step logs for error messages
+- Verify Docker image is accessible and correct
+- Confirm all required environment variables are set
+- Check for missing secrets or incorrect secret names
+- Validate command syntax and paths
+
+#### Secret Issues
+- Verify secret exists at appropriate level (repo/org/global)
+- Check secret name matches reference exactly (case-sensitive)
+- Ensure secret has appropriate event permissions
+- Confirm secret is not exposed in pull requests
+
+#### Service Connection Issues
+- Use service name as hostname, not localhost
+- Verify service is running and ready before step needs it
+- Check service environment variables and configuration
+- Ensure ports match between service and connection string
+
+#### Volume Issues
+- Verify volume paths are correct
+- Check file permissions in shared volumes
+- Ensure volumes are properly defined in pipeline
+- Confirm volume persistence settings
+
+### Debugging Techniques
+- Add debug output with `echo` commands
+- Use `set -x` in shell for verbose output
+- Check environment variables with `env` command
+- Verify file contents with `cat` or `ls -la`
+- Test Docker images locally before using in pipeline
+- Use `failure: ignore` temporarily to see all step results
+
+### Getting Help
+- Check Woodpecker CI documentation for updates
+- Review pipeline logs carefully
+- Search community forums and issues
+- Test configurations locally when possible
+- Simplify pipeline to isolate problems
+
+
+=== migration rules ===
+
+## Migration
+
+### From Drone CI
+- Woodpecker is a fork of Drone with backward compatibility
+- Most Drone pipelines work with minimal changes
+- Update webhook URLs to point to Woodpecker
+- Review and update any Drone-specific plugins
+- Test thoroughly after migration
+
+### From Other CI Systems
+- Convert workflow definitions to Woodpecker YAML syntax
+- Map CI concepts: jobs → workflows, tasks → steps
+- Convert environment variable syntax
+- Migrate secrets to Woodpecker secrets management
+- Update Docker image references
+- Test incrementally, workflow by workflow
+
+### Version Updates
+- Review changelog before updating Woodpecker
+- Test pipelines after updates in non-production first
+- Update CLI tools alongside server
+- Check for deprecated syntax or features
+- Update documentation to reflect changes
+</woodpecker-ci-guidelines>
