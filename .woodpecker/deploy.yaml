@@ -5,6 +5,8 @@ when:
 steps:
   - name: build-frontend
     image: node:20-alpine
+    environment:
+      CI: "true"
     commands:
       - npm ci
       - npm run build
