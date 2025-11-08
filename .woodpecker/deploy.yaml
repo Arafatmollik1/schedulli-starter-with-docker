@@ -24,34 +24,35 @@ steps:
       DEPLOY_PATH:
         from_secret: deploy_path
     commands:
+      # Install required tools
+      - apk add --no-cache openssh-client rsync bash
+      
       # Setup SSH
-      - apk add --no-cache openssh-client rsync
       - mkdir -p ~/.ssh
       - echo "$DEPLOY_SSH_KEY" > ~/.ssh/id_rsa
       - chmod 600 ~/.ssh/id_rsa
       - ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts
       
-      # Deploy code to server
-      - echo "Deploying to $DEPLOY_HOST:$DEPLOY_PATH"
-      
-      # Stop containers
-      - echo "Stopping containers..."
-      - ssh "$DEPLOY_USER@$DEPLOY_HOST" "cd $DEPLOY_PATH && docker compose -f docker-compose.prod.yml down 2>/dev/null || true"
-      
-      # Clean up build directory
-      - echo "Cleaning up public/build directory..."
-      - ssh "$DEPLOY_USER@$DEPLOY_HOST" "rm -rf $DEPLOY_PATH/public/build 2>/dev/null || true"
-      
-      # Sync files with rsync
-      - echo "Syncing files to server..."
-      - rsync -avz --delete --exclude='.git' --exclude='node_modules' --exclude='storage/logs/*' --exclude='storage/framework/sessions/*' --exclude='storage/framework/cache/*' --exclude='.env' ./ "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH/"
-      
-      # Verify deployment files
-      - echo "Verifying deployment files..."
-      - ssh "$DEPLOY_USER@$DEPLOY_HOST" "ls -la $DEPLOY_PATH/docker/entrypoint.sh"
-      
-      # Run deployment script on server
-      - echo "Running deployment script..."
-      - ssh "$DEPLOY_USER@$DEPLOY_HOST" "cd $DEPLOY_PATH && ./deploy.sh"
-      
-      - echo "Deployment completed successfully!"
+      # Use bash to execute deployment commands with proper variable expansion
+      - |
+        bash -c "
+        set -e
+        echo \"Deploying to $DEPLOY_HOST:$DEPLOY_PATH\"
+        
+        echo \"Stopping containers...\"
+        ssh -o StrictHostKeyChecking=no \"$DEPLOY_USER@$DEPLOY_HOST\" \"cd $DEPLOY_PATH && docker compose -f docker-compose.prod.yml down 2>/dev/null || true\"
+        
+        echo \"Cleaning up public/build directory...\"
+        ssh -o StrictHostKeyChecking=no \"$DEPLOY_USER@$DEPLOY_HOST\" \"rm -rf $DEPLOY_PATH/public/build 2>/dev/null || true\"
+        
+        echo \"Syncing files to server...\"
+        rsync -avz --delete --exclude='.git' --exclude='node_modules' --exclude='storage/logs/*' --exclude='storage/framework/sessions/*' --exclude='storage/framework/cache/*' --exclude='.env' ./ \"$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH/\"
+        
+        echo \"Verifying deployment files...\"
+        ssh -o StrictHostKeyChecking=no \"$DEPLOY_USER@$DEPLOY_HOST\" \"ls -la $DEPLOY_PATH/docker/entrypoint.sh\"
+        
+        echo \"Running deployment script...\"
+        ssh -o StrictHostKeyChecking=no \"$DEPLOY_USER@$DEPLOY_HOST\" \"cd $DEPLOY_PATH && chmod +x deploy.sh && ./deploy.sh\"
+        
+        echo \"Deployment completed successfully!\"
+        "

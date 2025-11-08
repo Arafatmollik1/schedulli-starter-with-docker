@@ -22,13 +22,13 @@ sleep 10
 
 # Run migrations
 echo "🗄️  Running database migrations..."
-docker compose -f docker-compose.prod.yml exec -T app php artisan migrate --force
+docker compose -f docker-compose.prod.yml exec -T frankenphp php artisan migrate --force
 
 # Cache configuration
 echo "⚡ Caching configuration..."
-docker compose -f docker-compose.prod.yml exec -T app php artisan config:cache
-docker compose -f docker-compose.prod.yml exec -T app php artisan route:cache
-docker compose -f docker-compose.prod.yml exec -T app php artisan view:cache
+docker compose -f docker-compose.prod.yml exec -T frankenphp php artisan config:cache
+docker compose -f docker-compose.prod.yml exec -T frankenphp php artisan route:cache
+docker compose -f docker-compose.prod.yml exec -T frankenphp php artisan view:cache
 
 # Show running containers
 echo "✅ Deployment completed! Running containers:"
