@@ -42,11 +42,17 @@ steps:
         echo \"Stopping containers...\"
         ssh -o StrictHostKeyChecking=no \"$DEPLOY_USER@$DEPLOY_HOST\" \"cd $DEPLOY_PATH && docker compose -f docker-compose.prod.yml down 2>/dev/null || true\"
         
+        echo \"Fixing permissions on public directory...\"
+        ssh -o StrictHostKeyChecking=no \"$DEPLOY_USER@$DEPLOY_HOST\" \"mkdir -p $DEPLOY_PATH/public/build && chown -R $DEPLOY_USER:$DEPLOY_USER $DEPLOY_PATH/public && chmod -R 755 $DEPLOY_PATH/public\"
+        
         echo \"Cleaning up public/build directory...\"
-        ssh -o StrictHostKeyChecking=no \"$DEPLOY_USER@$DEPLOY_HOST\" \"rm -rf $DEPLOY_PATH/public/build 2>/dev/null || true\"
+        ssh -o StrictHostKeyChecking=no \"$DEPLOY_USER@$DEPLOY_HOST\" \"rm -rf $DEPLOY_PATH/public/build/* 2>/dev/null || true\"
         
         echo \"Syncing files to server...\"
         rsync -avz --delete --exclude='.git' --exclude='node_modules' --exclude='storage/logs/*' --exclude='storage/framework/sessions/*' --exclude='storage/framework/cache/*' --exclude='.env' ./ \"$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH/\"
+        
+        echo \"Fixing permissions after sync...\"
+        ssh -o StrictHostKeyChecking=no \"$DEPLOY_USER@$DEPLOY_HOST\" \"chown -R $DEPLOY_USER:$DEPLOY_USER $DEPLOY_PATH/public/build 2>/dev/null || true\"
         
         echo \"Verifying deployment files...\"
         ssh -o StrictHostKeyChecking=no \"$DEPLOY_USER@$DEPLOY_HOST\" \"ls -la $DEPLOY_PATH/docker/entrypoint.sh\"
