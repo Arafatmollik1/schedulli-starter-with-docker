@@ -1,0 +1,68 @@
+{
+	auto_https off
+}
+
+:80 {
+	root * /var/www/html/public
+
+	# Handle Vite HMR - proxy WebSocket and HTTP requests to Vite dev server
+	handle /@vite* {
+		reverse_proxy node:5173 {
+			header_up Host {host}
+			header_up X-Real-IP {remote_host}
+			header_up X-Forwarded-For {remote_host}
+			header_up X-Forwarded-Proto {scheme}
+		}
+	}
+
+	handle /@react-refresh* {
+		reverse_proxy node:5173 {
+			header_up Host {host}
+			header_up X-Real-IP {remote_host}
+			header_up X-Forwarded-For {remote_host}
+			header_up X-Forwarded-Proto {scheme}
+		}
+	}
+
+	handle /@id* {
+		reverse_proxy node:5173 {
+			header_up Host {host}
+			header_up X-Real-IP {remote_host}
+			header_up X-Forwarded-For {remote_host}
+			header_up X-Forwarded-Proto {scheme}
+		}
+	}
+
+	handle /vite* {
+		reverse_proxy node:5173 {
+			header_up Host {host}
+			header_up X-Real-IP {remote_host}
+			header_up X-Forwarded-For {remote_host}
+			header_up X-Forwarded-Proto {scheme}
+		}
+	}
+
+	# Handle static files first
+	@static {
+		file
+		path *.css *.js *.jpg *.jpeg *.png *.gif *.ico *.svg *.woff *.woff2 *.ttf *.eot
+	}
+	handle @static {
+		file_server
+	}
+
+	# Proxy all other requests to FrankenPHP
+	reverse_proxy frankenphp:8000 {
+		header_up Host {host}
+		header_up X-Real-IP {remote_host}
+		header_up X-Forwarded-For {remote_host}
+		header_up X-Forwarded-Proto {scheme}
+		header_up X-Forwarded-Host {host}
+	}
+
+	# Logging
+	log {
+		output stdout
+		format console
+	}
+}

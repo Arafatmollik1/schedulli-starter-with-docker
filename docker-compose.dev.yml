@@ -48,7 +48,7 @@ services:
     container_name: schedulli_caddy_dev
     restart: unless-stopped
     ports:
-      - "${APP_PORT:-8000}:80"
+      - "80:80"
       - "8443:443"
       - "8443:443/udp"
     volumes:

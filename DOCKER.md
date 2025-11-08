@@ -17,6 +17,8 @@ This guide explains how to run the Schedulli application using Docker for both d
    cp .env.example .env
    ```
 
+   **Note:** Ensure you have created the Caddyfile at `./docker/caddy/Caddyfile.dev` for development. The docker-compose file expects this file to exist.
+
 2. **Configure your `.env` file:**
    ```bash
    APP_NAME="Schedulli"
@@ -53,7 +55,8 @@ This guide explains how to run the Schedulli application using Docker for both d
    ```
 
 5. **Access your application:**
-   - Application: http://localhost:8000
+   - Application: http://localhost:${APP_PORT:-8000}
+   - HTTPS: https://localhost:8443
    - Vite HMR: http://localhost:5173
 
 ### Development Commands
@@ -65,7 +68,11 @@ docker-compose -f docker-compose.dev.yml up -d
 
 **View logs:**
 ```bash
+# All services
 docker-compose -f docker-compose.dev.yml logs -f
+
+# Specific service
+docker-compose -f docker-compose.dev.yml logs -f <service-name>
 ```
 
 **Run migrations:**
@@ -85,12 +92,20 @@ docker-compose -f docker-compose.dev.yml exec frankenphp composer <command>
 
 **Run NPM commands:**
 ```bash
+# In running node container
 docker-compose -f docker-compose.dev.yml exec node npm <command>
+
+# Or run one-off command
+docker-compose -f docker-compose.dev.yml run --rm node npm <command>
 ```
 
 **Access database:**
 ```bash
+# From container
 docker-compose -f docker-compose.dev.yml exec db psql -U postgres -d schedulli
+
+# From host (if DB_PORT is exposed)
+psql -h localhost -p ${DB_PORT:-5432} -U postgres -d schedulli
 ```
 
 **Stop all services:**
@@ -105,19 +120,19 @@ docker-compose -f docker-compose.dev.yml down -v
 
 ### Development Features
 
-- **Hot Reload**: Octane runs with `--watch` flag for automatic code reloading
+- **Hot Reload**: Code changes are immediately reflected via volume mounts
 - **Vite HMR**: Vite dev server runs on port 5173 with WebSocket support through Caddy
 - **Volume Mounts**: All code changes are immediately reflected in containers
-- **HTTP/3**: Enabled in Caddy (optional, can be disabled for faster startup)
+- **HTTP/3**: Enabled in Caddy on port 8443 (HTTPS)
 
 ### Development Services
 
-- **frankenphp**: FrankenPHP with Laravel Octane (hot reload via volumes and `--watch`, port 8000 internal)
-- **caddy**: Caddy web server (port 8000) with Vite HMR proxy
-- **node**: Node.js with Vite dev server on port 5173
-- **db**: PostgreSQL 16 database
-- **redis**: Redis 7 for cache/sessions/queues
-- **queue**: Laravel queue worker
+- **frankenphp**: FrankenPHP with Laravel Octane (port 8000 internal, healthcheck enabled)
+- **caddy**: Caddy web server (port ${APP_PORT:-8000} → 80, 8443 → 443) with Vite HMR proxy
+- **node**: Node.js with Vite dev server running `npm run dev` on port 5173
+- **db**: PostgreSQL 16 database (port ${DB_PORT:-5432} exposed)
+- **redis**: Redis 7 for cache/sessions/queues (port ${REDIS_PORT:-6380} exposed)
+- **queue**: Laravel queue worker running `php artisan queue:work redis`
 
 ## Production Environment
 
@@ -164,7 +179,7 @@ docker-compose -f docker-compose.dev.yml down -v
    ```bash
    docker-compose -f docker-compose.prod.yml up node --build
    ```
-   This builds your React/Vite assets into `public/build`.
+   This builds your React/Vite assets into `public/build`. The node service runs once and exits after building.
 
 3. **Configure Caddy domain and email:**
    ```bash
@@ -172,6 +187,8 @@ docker-compose -f docker-compose.dev.yml down -v
    CADDY_DOMAIN=yourdomain.com
    CADDY_EMAIL=your-email@example.com
    ```
+
+   **Note:** Ensure you have created the Caddyfile at `./docker/caddy/Caddyfile` for production. The docker-compose file expects this file to exist.
 
 4. **Generate application key:**
    ```bash
@@ -256,13 +273,13 @@ docker-compose -f docker-compose.prod.yml down -v
 
 ### Production Services
 
-- **frankenphp**: FrankenPHP with Laravel Octane (port 8000, internal)
-- **caddy**: Caddy web server with HTTP/3 support (ports 80/443)
-- **node**: Node.js build service (runs once to build assets)
-- **db**: PostgreSQL 16 with health checks
-- **redis**: Redis 7 with password protection
-- **queue**: Laravel queue worker
-- **scheduler**: Laravel task scheduler (cron)
+- **frankenphp**: FrankenPHP with Laravel Octane (port 8000 internal, runs as www-data)
+- **caddy**: Caddy web server with HTTP/3 support (ports 80/443, reads from `./docker/caddy/Caddyfile`)
+- **node**: Node.js build service (runs `npm run build` once, then exits)
+- **db**: PostgreSQL 16 with health checks (no exposed ports, internal only)
+- **redis**: Redis 7 with password protection and health checks (no exposed ports, internal only)
+- **queue**: Laravel queue worker running `php artisan queue:work redis` (runs as www-data)
+- **scheduler**: Laravel task scheduler running `php artisan schedule:run` every 60 seconds (runs as www-data)
 
 ## Environment Variables
 
@@ -284,11 +301,13 @@ docker-compose -f docker-compose.prod.yml down -v
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `APP_PORT` | `8000` | Port for nginx (dev) |
-| `DB_PORT` | `5432` (dev) | Database port |
-| `REDIS_PORT` | `6379` | Redis port |
+| `APP_PORT` | `8000` | Port for Caddy in development (maps to container port 80) |
+| `DB_PORT` | `5432` (dev) | Database port (exposed in dev only, internal in prod) |
+| `REDIS_PORT` | `6380` (dev) | Redis port (exposed in dev only, internal in prod) |
 | `REDIS_PASSWORD` | `null` (dev) | Redis password (required in prod) |
 | `OCTANE_SERVER` | `frankenphp` | Octane server type (frankenphp/swoole/roadrunner) |
+| `UID` | `1000` (dev) | User ID for file permissions (dev only) |
+| `GID` | `1000` (dev) | Group ID for file permissions (dev only) |
 
 ## Important Notes
 
@@ -296,20 +315,38 @@ docker-compose -f docker-compose.prod.yml down -v
 
 ⚠️ **Important**: In Docker, use `DB_HOST=db` (the service name), **NOT** `127.0.0.1` or `localhost`. Services communicate via Docker's internal network.
 
-### Development vs Production
+**Development:** Database port is exposed to host (default 5432) for direct access  
+**Production:** Database port is internal only for security
 
-- **Development**: Hot reload, volume mounts, debug enabled
-- **Production**: Optimized builds, caching enabled, secure defaults
+### Development vs Production Differences
+
+| Feature | Development | Production |
+|---------|------------|------------|
+| **Hot Reload** | ✅ Volume mounts enable instant code changes | ❌ Requires rebuild |
+| **Debug Mode** | ✅ `APP_DEBUG=true` | ❌ `APP_DEBUG=false` |
+| **Vite** | ✅ Dev server (`npm run dev`) | ❌ Build only (`npm run build`) |
+| **Ports** | Exposed (DB, Redis, App) | Internal only (DB, Redis) |
+| **User** | Custom UID/GID | `www-data` |
+| **Restart Policy** | `unless-stopped` | `always` |
+| **Volumes** | Full codebase mounted | Read-only + storage/cache only |
+| **Scheduler** | ❌ Not included | ✅ Included |
+| **Health Checks** | FrankenPHP only | DB, Redis, FrankenPHP |
+| **HTTPS** | Port 8443 (dev cert) | Ports 80/443 (Let's Encrypt) |
 
 ### SSL/HTTPS
 
-For production HTTPS:
-1. Set `CADDY_DOMAIN` and `CADDY_EMAIL` in your `.env` file
+**Development:**
+- HTTPS available on port 8443 (self-signed certificate)
+- Access via `https://localhost:8443`
+- HTTP/3 (QUIC) enabled on port 8443/udp
+
+**Production:**
+1. Set `CADDY_DOMAIN` and `CADDY_EMAIL` in your `.env` file (or as environment variables)
 2. Caddy automatically obtains SSL certificates from Let's Encrypt
-3. HTTP/3 (QUIC) is automatically enabled
+3. HTTP/3 (QUIC) is automatically enabled on port 443/udp
 4. Update `APP_URL` to `https://yourdomain.com`
 
-**Note:** Ensure ports 80 and 443 (TCP and UDP) are open in your firewall for Caddy to function properly.
+**Note:** Ensure ports 80 and 443 (TCP and UDP) are open in your firewall for Caddy to function properly in production.
 
 ## Troubleshooting
 
@@ -319,6 +356,8 @@ If port 8000 is taken, change it in `.env`:
 ```bash
 APP_PORT=8001
 ```
+
+If port 5173 (Vite) is taken, you may need to stop other Vite instances or change the port mapping in `docker-compose.dev.yml`.
 
 ### Database Connection Issues
 
@@ -339,9 +378,11 @@ APP_PORT=8001
 - Restart Caddy: `docker-compose -f docker-compose.dev.yml restart caddy`
 
 **Production:**
-- Rebuild assets: `docker-compose -f docker-compose.prod.yml up node --build`
+- Rebuild assets: `docker-compose -f docker-compose.prod.yml up node --build` (node service runs once and exits)
 - Restart Caddy: `docker-compose -f docker-compose.prod.yml restart caddy`
 - Clear browser cache
+
+**Note:** The production node service is a one-time build service. After building assets, it exits. To rebuild, run the command above again.
 
 ### HTTP/3 Verification
 
@@ -364,15 +405,33 @@ docker-compose -f docker-compose.prod.yml exec frankenphp php artisan octane:sta
 
 ### Permission Issues
 
+**Development:**
 ```bash
 # Fix storage permissions
 docker-compose -f docker-compose.dev.yml exec frankenphp chmod -R 755 storage bootstrap/cache
 ```
 
+**Production:**
+Production containers run as `www-data` user, so permissions should be handled correctly. If you encounter issues:
+```bash
+# Check ownership
+docker-compose -f docker-compose.prod.yml exec frankenphp ls -la storage
+
+# Fix if needed (run from host)
+sudo chown -R www-data:www-data storage bootstrap/cache
+```
+
 ### Redis Connection Issues
 
-**Development:** Redis runs without password  
-**Production:** Set `REDIS_PASSWORD` in `.env` and ensure it matches docker-compose
+**Development:** 
+- Redis runs without password on port ${REDIS_PORT:-6380} (mapped from container port 6379)
+- Accessible from host at `localhost:6380`
+
+**Production:** 
+- Redis requires password protection
+- Set `REDIS_PASSWORD` in `.env` and ensure it matches docker-compose
+- Redis is not exposed to host (internal only)
+- Access from other containers using `redis:6379` with password
 
 ### View Container Logs
 
