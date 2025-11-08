@@ -33,7 +33,6 @@ steps:
         ssh -o StrictHostKeyChecking=no "$DEPLOY_USER@$DEPLOY_HOST" "
           cd $DEPLOY_PATH &&
           docker compose -f docker-compose.prod.yml down 2>/dev/null || true &&
-          rm -rf public/build &&
           mkdir -p public/build
         "
       - rsync -avz --delete --exclude='.git' --exclude='node_modules' --exclude='storage/logs/*' --exclude='storage/framework/sessions/*' --exclude='storage/framework/cache/*' --exclude='.env' ./ "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH/"
