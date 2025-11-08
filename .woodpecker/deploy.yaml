@@ -36,39 +36,22 @@ steps:
       
       # Stop containers
       - echo "Stopping containers..."
-      - |
-        ssh "${DEPLOY_USER}@${DEPLOY_HOST}" \
-          "cd ${DEPLOY_PATH} && docker compose -f docker-compose.prod.yml down 2>/dev/null || true"
+      - ssh "$DEPLOY_USER@$DEPLOY_HOST" "cd $DEPLOY_PATH && docker compose -f docker-compose.prod.yml down 2>/dev/null || true"
       
       # Clean up build directory
       - echo "Cleaning up public/build directory..."
-      - |
-        ssh "${DEPLOY_USER}@${DEPLOY_HOST}" \
-          "rm -rf ${DEPLOY_PATH}/public/build 2>/dev/null || true"
+      - ssh "$DEPLOY_USER@$DEPLOY_HOST" "rm -rf $DEPLOY_PATH/public/build 2>/dev/null || true"
       
       # Sync files with rsync
       - echo "Syncing files to server..."
-      - |
-        rsync -avz --delete \
-          --exclude='.git' \
-          --exclude='node_modules' \
-          --exclude='storage/logs/*' \
-          --exclude='storage/framework/sessions/*' \
-          --exclude='storage/framework/cache/*' \
-          --exclude='.env' \
-          ./ \
-          "${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PATH}/"
+      - rsync -avz --delete --exclude='.git' --exclude='node_modules' --exclude='storage/logs/*' --exclude='storage/framework/sessions/*' --exclude='storage/framework/cache/*' --exclude='.env' ./ "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH/"
       
       # Verify deployment files
       - echo "Verifying deployment files..."
-      - |
-        ssh "${DEPLOY_USER}@${DEPLOY_HOST}" \
-          "ls -la ${DEPLOY_PATH}/docker/entrypoint.sh"
+      - ssh "$DEPLOY_USER@$DEPLOY_HOST" "ls -la $DEPLOY_PATH/docker/entrypoint.sh"
       
       # Run deployment script on server
       - echo "Running deployment script..."
-      - |
-        ssh "${DEPLOY_USER}@${DEPLOY_HOST}" \
-          "cd ${DEPLOY_PATH} && ./deploy.sh"
+      - ssh "$DEPLOY_USER@$DEPLOY_HOST" "cd $DEPLOY_PATH && ./deploy.sh"
       
       - echo "Deployment completed successfully!"
