@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../wayfinder'
 /**
 * @see \App\Http\Controllers\ExpertController::index
-* @see app/Http/Controllers/ExpertController.php:18
+* @see Http/Controllers/ExpertController.php:18
 * @route '/api/experts'
 */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\ExpertController::index
-* @see app/Http/Controllers/ExpertController.php:18
+* @see Http/Controllers/ExpertController.php:18
 * @route '/api/experts'
 */
 index.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ index.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\ExpertController::index
-* @see app/Http/Controllers/ExpertController.php:18
+* @see Http/Controllers/ExpertController.php:18
 * @route '/api/experts'
 */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -35,7 +35,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\ExpertController::index
-* @see app/Http/Controllers/ExpertController.php:18
+* @see Http/Controllers/ExpertController.php:18
 * @route '/api/experts'
 */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -45,7 +45,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\ExpertController::index
-* @see app/Http/Controllers/ExpertController.php:18
+* @see Http/Controllers/ExpertController.php:18
 * @route '/api/experts'
 */
 const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -55,7 +55,7 @@ const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => (
 
 /**
 * @see \App\Http\Controllers\ExpertController::index
-* @see app/Http/Controllers/ExpertController.php:18
+* @see Http/Controllers/ExpertController.php:18
 * @route '/api/experts'
 */
 indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -65,7 +65,7 @@ indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\ExpertController::index
-* @see app/Http/Controllers/ExpertController.php:18
+* @see Http/Controllers/ExpertController.php:18
 * @route '/api/experts'
 */
 indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -82,7 +82,7 @@ index.form = indexForm
 
 /**
 * @see \App\Http\Controllers\ExpertController::index
-* @see app/Http/Controllers/ExpertController.php:18
+* @see Http/Controllers/ExpertController.php:18
 * @route '/experts'
 */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -97,7 +97,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\ExpertController::index
-* @see app/Http/Controllers/ExpertController.php:18
+* @see Http/Controllers/ExpertController.php:18
 * @route '/experts'
 */
 index.url = (options?: RouteQueryOptions) => {
@@ -106,7 +106,7 @@ index.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\ExpertController::index
-* @see app/Http/Controllers/ExpertController.php:18
+* @see Http/Controllers/ExpertController.php:18
 * @route '/experts'
 */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -116,7 +116,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\ExpertController::index
-* @see app/Http/Controllers/ExpertController.php:18
+* @see Http/Controllers/ExpertController.php:18
 * @route '/experts'
 */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -126,7 +126,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\ExpertController::index
-* @see app/Http/Controllers/ExpertController.php:18
+* @see Http/Controllers/ExpertController.php:18
 * @route '/experts'
 */
 const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -136,7 +136,7 @@ const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => (
 
 /**
 * @see \App\Http\Controllers\ExpertController::index
-* @see app/Http/Controllers/ExpertController.php:18
+* @see Http/Controllers/ExpertController.php:18
 * @route '/experts'
 */
 indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -146,7 +146,7 @@ indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\ExpertController::index
-* @see app/Http/Controllers/ExpertController.php:18
+* @see Http/Controllers/ExpertController.php:18
 * @route '/experts'
 */
 indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -163,7 +163,7 @@ index.form = indexForm
 
 /**
 * @see \App\Http\Controllers\ExpertController::store
-* @see app/Http/Controllers/ExpertController.php:50
+* @see Http/Controllers/ExpertController.php:50
 * @route '/api/experts'
 */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -178,7 +178,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\ExpertController::store
-* @see app/Http/Controllers/ExpertController.php:50
+* @see Http/Controllers/ExpertController.php:50
 * @route '/api/experts'
 */
 store.url = (options?: RouteQueryOptions) => {
@@ -187,7 +187,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\ExpertController::store
-* @see app/Http/Controllers/ExpertController.php:50
+* @see Http/Controllers/ExpertController.php:50
 * @route '/api/experts'
 */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -197,7 +197,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
 /**
 * @see \App\Http\Controllers\ExpertController::store
-* @see app/Http/Controllers/ExpertController.php:50
+* @see Http/Controllers/ExpertController.php:50
 * @route '/api/experts'
 */
 const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -207,7 +207,7 @@ const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => 
 
 /**
 * @see \App\Http\Controllers\ExpertController::store
-* @see app/Http/Controllers/ExpertController.php:50
+* @see Http/Controllers/ExpertController.php:50
 * @route '/api/experts'
 */
 storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -219,7 +219,7 @@ store.form = storeForm
 
 /**
 * @see \App\Http\Controllers\ExpertController::show
-* @see app/Http/Controllers/ExpertController.php:34
+* @see Http/Controllers/ExpertController.php:34
 * @route '/api/experts/{expert}'
 */
 export const show = (args: { expert: string | number | { id: string | number } } | [expert: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -234,7 +234,7 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\ExpertController::show
-* @see app/Http/Controllers/ExpertController.php:34
+* @see Http/Controllers/ExpertController.php:34
 * @route '/api/experts/{expert}'
 */
 show.url = (args: { expert: string | number | { id: string | number } } | [expert: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
@@ -267,7 +267,7 @@ show.url = (args: { expert: string | number | { id: string | number } } | [exper
 
 /**
 * @see \App\Http\Controllers\ExpertController::show
-* @see app/Http/Controllers/ExpertController.php:34
+* @see Http/Controllers/ExpertController.php:34
 * @route '/api/experts/{expert}'
 */
 show.get = (args: { expert: string | number | { id: string | number } } | [expert: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -277,7 +277,7 @@ show.get = (args: { expert: string | number | { id: string | number } } | [exper
 
 /**
 * @see \App\Http\Controllers\ExpertController::show
-* @see app/Http/Controllers/ExpertController.php:34
+* @see Http/Controllers/ExpertController.php:34
 * @route '/api/experts/{expert}'
 */
 show.head = (args: { expert: string | number | { id: string | number } } | [expert: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -287,7 +287,7 @@ show.head = (args: { expert: string | number | { id: string | number } } | [expe
 
 /**
 * @see \App\Http\Controllers\ExpertController::show
-* @see app/Http/Controllers/ExpertController.php:34
+* @see Http/Controllers/ExpertController.php:34
 * @route '/api/experts/{expert}'
 */
 const showForm = (args: { expert: string | number | { id: string | number } } | [expert: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -297,7 +297,7 @@ const showForm = (args: { expert: string | number | { id: string | number } } | 
 
 /**
 * @see \App\Http\Controllers\ExpertController::show
-* @see app/Http/Controllers/ExpertController.php:34
+* @see Http/Controllers/ExpertController.php:34
 * @route '/api/experts/{expert}'
 */
 showForm.get = (args: { expert: string | number | { id: string | number } } | [expert: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -307,7 +307,7 @@ showForm.get = (args: { expert: string | number | { id: string | number } } | [e
 
 /**
 * @see \App\Http\Controllers\ExpertController::show
-* @see app/Http/Controllers/ExpertController.php:34
+* @see Http/Controllers/ExpertController.php:34
 * @route '/api/experts/{expert}'
 */
 showForm.head = (args: { expert: string | number | { id: string | number } } | [expert: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -324,7 +324,7 @@ show.form = showForm
 
 /**
 * @see \App\Http\Controllers\ExpertController::show
-* @see app/Http/Controllers/ExpertController.php:34
+* @see Http/Controllers/ExpertController.php:34
 * @route '/experts/{expert}'
 */
 export const show = (args: { expert: string | number | { id: string | number } } | [expert: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -339,7 +339,7 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\ExpertController::show
-* @see app/Http/Controllers/ExpertController.php:34
+* @see Http/Controllers/ExpertController.php:34
 * @route '/experts/{expert}'
 */
 show.url = (args: { expert: string | number | { id: string | number } } | [expert: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
@@ -372,7 +372,7 @@ show.url = (args: { expert: string | number | { id: string | number } } | [exper
 
 /**
 * @see \App\Http\Controllers\ExpertController::show
-* @see app/Http/Controllers/ExpertController.php:34
+* @see Http/Controllers/ExpertController.php:34
 * @route '/experts/{expert}'
 */
 show.get = (args: { expert: string | number | { id: string | number } } | [expert: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -382,7 +382,7 @@ show.get = (args: { expert: string | number | { id: string | number } } | [exper
 
 /**
 * @see \App\Http\Controllers\ExpertController::show
-* @see app/Http/Controllers/ExpertController.php:34
+* @see Http/Controllers/ExpertController.php:34
 * @route '/experts/{expert}'
 */
 show.head = (args: { expert: string | number | { id: string | number } } | [expert: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -392,7 +392,7 @@ show.head = (args: { expert: string | number | { id: string | number } } | [expe
 
 /**
 * @see \App\Http\Controllers\ExpertController::show
-* @see app/Http/Controllers/ExpertController.php:34
+* @see Http/Controllers/ExpertController.php:34
 * @route '/experts/{expert}'
 */
 const showForm = (args: { expert: string | number | { id: string | number } } | [expert: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -402,7 +402,7 @@ const showForm = (args: { expert: string | number | { id: string | number } } | 
 
 /**
 * @see \App\Http\Controllers\ExpertController::show
-* @see app/Http/Controllers/ExpertController.php:34
+* @see Http/Controllers/ExpertController.php:34
 * @route '/experts/{expert}'
 */
 showForm.get = (args: { expert: string | number | { id: string | number } } | [expert: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -412,7 +412,7 @@ showForm.get = (args: { expert: string | number | { id: string | number } } | [e
 
 /**
 * @see \App\Http\Controllers\ExpertController::show
-* @see app/Http/Controllers/ExpertController.php:34
+* @see Http/Controllers/ExpertController.php:34
 * @route '/experts/{expert}'
 */
 showForm.head = (args: { expert: string | number | { id: string | number } } | [expert: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -429,7 +429,7 @@ show.form = showForm
 
 /**
 * @see \App\Http\Controllers\ExpertController::update
-* @see app/Http/Controllers/ExpertController.php:60
+* @see Http/Controllers/ExpertController.php:60
 * @route '/api/experts/{expert}'
 */
 export const update = (args: { expert: string | number | { id: string | number } } | [expert: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -444,7 +444,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\ExpertController::update
-* @see app/Http/Controllers/ExpertController.php:60
+* @see Http/Controllers/ExpertController.php:60
 * @route '/api/experts/{expert}'
 */
 update.url = (args: { expert: string | number | { id: string | number } } | [expert: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
@@ -477,7 +477,7 @@ update.url = (args: { expert: string | number | { id: string | number } } | [exp
 
 /**
 * @see \App\Http\Controllers\ExpertController::update
-* @see app/Http/Controllers/ExpertController.php:60
+* @see Http/Controllers/ExpertController.php:60
 * @route '/api/experts/{expert}'
 */
 update.put = (args: { expert: string | number | { id: string | number } } | [expert: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -487,7 +487,7 @@ update.put = (args: { expert: string | number | { id: string | number } } | [exp
 
 /**
 * @see \App\Http\Controllers\ExpertController::update
-* @see app/Http/Controllers/ExpertController.php:60
+* @see Http/Controllers/ExpertController.php:60
 * @route '/api/experts/{expert}'
 */
 update.patch = (args: { expert: string | number | { id: string | number } } | [expert: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -497,7 +497,7 @@ update.patch = (args: { expert: string | number | { id: string | number } } | [e
 
 /**
 * @see \App\Http\Controllers\ExpertController::update
-* @see app/Http/Controllers/ExpertController.php:60
+* @see Http/Controllers/ExpertController.php:60
 * @route '/api/experts/{expert}'
 */
 const updateForm = (args: { expert: string | number | { id: string | number } } | [expert: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -512,7 +512,7 @@ const updateForm = (args: { expert: string | number | { id: string | number } } 
 
 /**
 * @see \App\Http\Controllers\ExpertController::update
-* @see app/Http/Controllers/ExpertController.php:60
+* @see Http/Controllers/ExpertController.php:60
 * @route '/api/experts/{expert}'
 */
 updateForm.put = (args: { expert: string | number | { id: string | number } } | [expert: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -527,7 +527,7 @@ updateForm.put = (args: { expert: string | number | { id: string | number } } | 
 
 /**
 * @see \App\Http\Controllers\ExpertController::update
-* @see app/Http/Controllers/ExpertController.php:60
+* @see Http/Controllers/ExpertController.php:60
 * @route '/api/experts/{expert}'
 */
 updateForm.patch = (args: { expert: string | number | { id: string | number } } | [expert: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -544,7 +544,7 @@ update.form = updateForm
 
 /**
 * @see \App\Http\Controllers\ExpertController::destroy
-* @see app/Http/Controllers/ExpertController.php:70
+* @see Http/Controllers/ExpertController.php:70
 * @route '/api/experts/{expert}'
 */
 export const destroy = (args: { expert: string | number | { id: string | number } } | [expert: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -559,7 +559,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\ExpertController::destroy
-* @see app/Http/Controllers/ExpertController.php:70
+* @see Http/Controllers/ExpertController.php:70
 * @route '/api/experts/{expert}'
 */
 destroy.url = (args: { expert: string | number | { id: string | number } } | [expert: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
@@ -592,7 +592,7 @@ destroy.url = (args: { expert: string | number | { id: string | number } } | [ex
 
 /**
 * @see \App\Http\Controllers\ExpertController::destroy
-* @see app/Http/Controllers/ExpertController.php:70
+* @see Http/Controllers/ExpertController.php:70
 * @route '/api/experts/{expert}'
 */
 destroy.delete = (args: { expert: string | number | { id: string | number } } | [expert: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -602,7 +602,7 @@ destroy.delete = (args: { expert: string | number | { id: string | number } } | 
 
 /**
 * @see \App\Http\Controllers\ExpertController::destroy
-* @see app/Http/Controllers/ExpertController.php:70
+* @see Http/Controllers/ExpertController.php:70
 * @route '/api/experts/{expert}'
 */
 const destroyForm = (args: { expert: string | number | { id: string | number } } | [expert: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -617,7 +617,7 @@ const destroyForm = (args: { expert: string | number | { id: string | number } }
 
 /**
 * @see \App\Http\Controllers\ExpertController::destroy
-* @see app/Http/Controllers/ExpertController.php:70
+* @see Http/Controllers/ExpertController.php:70
 * @route '/api/experts/{expert}'
 */
 destroyForm.delete = (args: { expert: string | number | { id: string | number } } | [expert: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

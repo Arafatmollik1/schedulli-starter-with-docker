@@ -1,11 +1,11 @@
 version: '3.8'
 
 services:
-  app:
+  frankenphp:
     build:
       context: .
-      dockerfile: Dockerfile
-    container_name: schedulli_app_prod
+      dockerfile: Dockerfile.frankenphp
+    container_name: schedulli_frankenphp_prod
     restart: always
     working_dir: /var/www/html
     networks:
@@ -16,6 +16,7 @@ services:
     environment:
       - APP_ENV=production
       - APP_DEBUG=false
+      - OCTANE_SERVER=frankenphp
       - DB_CONNECTION=pgsql
       - DB_HOST=db
       - DB_PORT=5432
@@ -24,6 +25,7 @@ services:
       - DB_PASSWORD=${DB_PASSWORD}
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
       - QUEUE_CONNECTION=redis
       - CACHE_STORE=redis
       - SESSION_DRIVER=redis
@@ -32,20 +34,26 @@ services:
       - ./bootstrap/cache:/var/www/html/bootstrap/cache
     user: www-data
 
-  nginx:
-    image: nginx:alpine
-    container_name: schedulli_nginx_prod
+  caddy:
+    image: caddy:2-alpine
+    container_name: schedulli_caddy_prod
     restart: always
     ports:
-      - "${APP_PORT:-80}:80"
-      - "${APP_SSL_PORT:-443}:443"
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
     volumes:
+      - ./docker/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
       - ./:/var/www/html:ro
-      - ./docker/nginx/prod.conf:/etc/nginx/conf.d/default.conf
+      - caddy_data:/data
+      - caddy_config:/config
     networks:
       - schedulli_network
     depends_on:
-      - app
+      - frankenphp
+    environment:
+      - CADDY_DOMAIN=${CADDY_DOMAIN:-localhost}
+      - CADDY_EMAIL=${CADDY_EMAIL:-admin@example.com}
 
   node:
     build:
@@ -95,14 +103,14 @@ services:
   queue:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.frankenphp
     container_name: schedulli_queue_prod
     restart: always
     working_dir: /var/www/html
     networks:
       - schedulli_network
     depends_on:
-      - app
+      - frankenphp
       - db
       - redis
     environment:
@@ -128,14 +136,14 @@ services:
   scheduler:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.frankenphp
     container_name: schedulli_scheduler_prod
     restart: always
     working_dir: /var/www/html
     networks:
       - schedulli_network
     depends_on:
-      - app
+      - frankenphp
       - db
       - redis
     environment:
@@ -168,4 +176,6 @@ networks:
 volumes:
   postgres_data_prod:
   redis_data_prod:
+  caddy_data:
+  caddy_config:
 

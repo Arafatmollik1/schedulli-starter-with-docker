@@ -24,6 +24,15 @@ done
 # Run Laravel setup commands only for the main app service
 # Skip for queue workers and scheduler
 if [ "$SKIP_SETUP" != "true" ]; then
+    # Install/update Composer dependencies if vendor directory doesn't exist or Octane is missing
+    if [ ! -d "vendor" ]; then
+        echo "Installing Composer dependencies..."
+        composer install --no-interaction --prefer-dist || composer update --no-interaction --prefer-dist
+    elif [ ! -d "vendor/laravel/octane" ]; then
+        echo "Octane package missing, updating Composer dependencies..."
+        composer update --no-interaction --prefer-dist
+    fi
+    
     if [ "$APP_ENV" = "production" ]; then
         echo "Running production setup..."
         php artisan config:cache
@@ -38,7 +47,14 @@ if [ "$SKIP_SETUP" != "true" ]; then
 
     # Run migrations
     php artisan migrate --force
+    
+    # Publish Octane configuration if not exists
+    if [ ! -f config/octane.php ]; then
+        echo "Publishing Octane configuration..."
+        php artisan octane:install --server=frankenphp --no-interaction || true
+    fi
 fi
 
+# Execute the provided command
 exec "$@"
 

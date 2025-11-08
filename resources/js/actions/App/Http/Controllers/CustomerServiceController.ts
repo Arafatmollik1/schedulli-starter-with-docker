@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\CustomerServiceController::index
-* @see app/Http/Controllers/CustomerServiceController.php:14
+* @see Http/Controllers/CustomerServiceController.php:14
 * @route '/api/customer-service'
 */
 const index03a320a3551f75adef7e9cdfd82e456e = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ index03a320a3551f75adef7e9cdfd82e456e.definition = {
 
 /**
 * @see \App\Http\Controllers\CustomerServiceController::index
-* @see app/Http/Controllers/CustomerServiceController.php:14
+* @see Http/Controllers/CustomerServiceController.php:14
 * @route '/api/customer-service'
 */
 index03a320a3551f75adef7e9cdfd82e456e.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ index03a320a3551f75adef7e9cdfd82e456e.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\CustomerServiceController::index
-* @see app/Http/Controllers/CustomerServiceController.php:14
+* @see Http/Controllers/CustomerServiceController.php:14
 * @route '/api/customer-service'
 */
 index03a320a3551f75adef7e9cdfd82e456e.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -35,7 +35,7 @@ index03a320a3551f75adef7e9cdfd82e456e.get = (options?: RouteQueryOptions): Route
 
 /**
 * @see \App\Http\Controllers\CustomerServiceController::index
-* @see app/Http/Controllers/CustomerServiceController.php:14
+* @see Http/Controllers/CustomerServiceController.php:14
 * @route '/api/customer-service'
 */
 index03a320a3551f75adef7e9cdfd82e456e.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -45,7 +45,7 @@ index03a320a3551f75adef7e9cdfd82e456e.head = (options?: RouteQueryOptions): Rout
 
 /**
 * @see \App\Http\Controllers\CustomerServiceController::index
-* @see app/Http/Controllers/CustomerServiceController.php:14
+* @see Http/Controllers/CustomerServiceController.php:14
 * @route '/api/customer-service'
 */
 const index03a320a3551f75adef7e9cdfd82e456eForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -55,7 +55,7 @@ const index03a320a3551f75adef7e9cdfd82e456eForm = (options?: RouteQueryOptions):
 
 /**
 * @see \App\Http\Controllers\CustomerServiceController::index
-* @see app/Http/Controllers/CustomerServiceController.php:14
+* @see Http/Controllers/CustomerServiceController.php:14
 * @route '/api/customer-service'
 */
 index03a320a3551f75adef7e9cdfd82e456eForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -65,7 +65,7 @@ index03a320a3551f75adef7e9cdfd82e456eForm.get = (options?: RouteQueryOptions): R
 
 /**
 * @see \App\Http\Controllers\CustomerServiceController::index
-* @see app/Http/Controllers/CustomerServiceController.php:14
+* @see Http/Controllers/CustomerServiceController.php:14
 * @route '/api/customer-service'
 */
 index03a320a3551f75adef7e9cdfd82e456eForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -81,7 +81,7 @@ index03a320a3551f75adef7e9cdfd82e456eForm.head = (options?: RouteQueryOptions): 
 index03a320a3551f75adef7e9cdfd82e456e.form = index03a320a3551f75adef7e9cdfd82e456eForm
 /**
 * @see \App\Http\Controllers\CustomerServiceController::index
-* @see app/Http/Controllers/CustomerServiceController.php:14
+* @see Http/Controllers/CustomerServiceController.php:14
 * @route '/customer-service'
 */
 const index49fab14b9dc6c60a7474a3af666b1e99 = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -96,7 +96,7 @@ index49fab14b9dc6c60a7474a3af666b1e99.definition = {
 
 /**
 * @see \App\Http\Controllers\CustomerServiceController::index
-* @see app/Http/Controllers/CustomerServiceController.php:14
+* @see Http/Controllers/CustomerServiceController.php:14
 * @route '/customer-service'
 */
 index49fab14b9dc6c60a7474a3af666b1e99.url = (options?: RouteQueryOptions) => {
@@ -105,7 +105,7 @@ index49fab14b9dc6c60a7474a3af666b1e99.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\CustomerServiceController::index
-* @see app/Http/Controllers/CustomerServiceController.php:14
+* @see Http/Controllers/CustomerServiceController.php:14
 * @route '/customer-service'
 */
 index49fab14b9dc6c60a7474a3af666b1e99.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -115,7 +115,7 @@ index49fab14b9dc6c60a7474a3af666b1e99.get = (options?: RouteQueryOptions): Route
 
 /**
 * @see \App\Http\Controllers\CustomerServiceController::index
-* @see app/Http/Controllers/CustomerServiceController.php:14
+* @see Http/Controllers/CustomerServiceController.php:14
 * @route '/customer-service'
 */
 index49fab14b9dc6c60a7474a3af666b1e99.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -125,7 +125,7 @@ index49fab14b9dc6c60a7474a3af666b1e99.head = (options?: RouteQueryOptions): Rout
 
 /**
 * @see \App\Http\Controllers\CustomerServiceController::index
-* @see app/Http/Controllers/CustomerServiceController.php:14
+* @see Http/Controllers/CustomerServiceController.php:14
 * @route '/customer-service'
 */
 const index49fab14b9dc6c60a7474a3af666b1e99Form = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -135,7 +135,7 @@ const index49fab14b9dc6c60a7474a3af666b1e99Form = (options?: RouteQueryOptions):
 
 /**
 * @see \App\Http\Controllers\CustomerServiceController::index
-* @see app/Http/Controllers/CustomerServiceController.php:14
+* @see Http/Controllers/CustomerServiceController.php:14
 * @route '/customer-service'
 */
 index49fab14b9dc6c60a7474a3af666b1e99Form.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -145,7 +145,7 @@ index49fab14b9dc6c60a7474a3af666b1e99Form.get = (options?: RouteQueryOptions): R
 
 /**
 * @see \App\Http\Controllers\CustomerServiceController::index
-* @see app/Http/Controllers/CustomerServiceController.php:14
+* @see Http/Controllers/CustomerServiceController.php:14
 * @route '/customer-service'
 */
 index49fab14b9dc6c60a7474a3af666b1e99Form.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

@@ -44,7 +44,7 @@ This guide explains how to run the Schedulli application using Docker for both d
 
 3. **Generate application key:**
    ```bash
-   docker-compose -f docker-compose.dev.yml run --rm app php artisan key:generate
+   docker-compose -f docker-compose.dev.yml run --rm frankenphp php artisan key:generate
    ```
 
 4. **Start all services:**
@@ -70,17 +70,17 @@ docker-compose -f docker-compose.dev.yml logs -f
 
 **Run migrations:**
 ```bash
-docker-compose -f docker-compose.dev.yml exec app php artisan migrate
+docker-compose -f docker-compose.dev.yml exec frankenphp php artisan migrate
 ```
 
 **Run Artisan commands:**
 ```bash
-docker-compose -f docker-compose.dev.yml exec app php artisan <command>
+docker-compose -f docker-compose.dev.yml exec frankenphp php artisan <command>
 ```
 
 **Run Composer commands:**
 ```bash
-docker-compose -f docker-compose.dev.yml exec app composer <command>
+docker-compose -f docker-compose.dev.yml exec frankenphp composer <command>
 ```
 
 **Run NPM commands:**
@@ -103,10 +103,17 @@ docker-compose -f docker-compose.dev.yml down
 docker-compose -f docker-compose.dev.yml down -v
 ```
 
+### Development Features
+
+- **Hot Reload**: Octane runs with `--watch` flag for automatic code reloading
+- **Vite HMR**: Vite dev server runs on port 5173 with WebSocket support through Caddy
+- **Volume Mounts**: All code changes are immediately reflected in containers
+- **HTTP/3**: Enabled in Caddy (optional, can be disabled for faster startup)
+
 ### Development Services
 
-- **app**: PHP-FPM 8.4 with Laravel (hot reload via volumes)
-- **nginx**: Web server on port 8000
+- **frankenphp**: FrankenPHP with Laravel Octane (hot reload via volumes and `--watch`, port 8000 internal)
+- **caddy**: Caddy web server (port 8000) with Vite HMR proxy
 - **node**: Node.js with Vite dev server on port 5173
 - **db**: PostgreSQL 16 database
 - **redis**: Redis 7 for cache/sessions/queues
@@ -159,24 +166,33 @@ docker-compose -f docker-compose.dev.yml down -v
    ```
    This builds your React/Vite assets into `public/build`.
 
-3. **Generate application key:**
+3. **Configure Caddy domain and email:**
    ```bash
-   docker-compose -f docker-compose.prod.yml run --rm app php artisan key:generate
+   # Add to your .env file
+   CADDY_DOMAIN=yourdomain.com
+   CADDY_EMAIL=your-email@example.com
    ```
 
-4. **Start all services:**
+4. **Generate application key:**
+   ```bash
+   docker-compose -f docker-compose.prod.yml run --rm frankenphp php artisan key:generate
+   ```
+
+5. **Start all services:**
    ```bash
    docker-compose -f docker-compose.prod.yml up -d --build
    ```
+   
+   **Note:** On first start, Caddy will automatically obtain SSL certificates from Let's Encrypt. This may take a few minutes.
 
-5. **Run initial migrations:**
+6. **Run initial migrations:**
    ```bash
-   docker-compose -f docker-compose.prod.yml exec app php artisan migrate --force
+   docker-compose -f docker-compose.prod.yml exec frankenphp php artisan migrate --force
    ```
 
-6. **Access your application:**
-   - Application: http://your-domain (or configured port)
-   - SSL: Configure certificates in `docker/nginx/ssl/` and uncomment SSL config in `docker/nginx/prod.conf`
+7. **Access your application:**
+   - Application: https://yourdomain.com (Caddy handles SSL automatically)
+   - HTTP/3 (QUIC) is automatically enabled
 
 ### Production Commands
 
@@ -192,7 +208,8 @@ docker-compose -f docker-compose.prod.yml logs -f
 
 **View specific service logs:**
 ```bash
-docker-compose -f docker-compose.prod.yml logs -f app
+docker-compose -f docker-compose.prod.yml logs -f frankenphp
+docker-compose -f docker-compose.prod.yml logs -f caddy
 docker-compose -f docker-compose.prod.yml logs -f queue
 docker-compose -f docker-compose.prod.yml logs -f scheduler
 ```
@@ -200,26 +217,31 @@ docker-compose -f docker-compose.prod.yml logs -f scheduler
 **Rebuild assets after code changes:**
 ```bash
 docker-compose -f docker-compose.prod.yml up node --build
-docker-compose -f docker-compose.prod.yml restart nginx
+docker-compose -f docker-compose.prod.yml restart caddy
 ```
 
 **Run migrations:**
 ```bash
-docker-compose -f docker-compose.prod.yml exec app php artisan migrate --force
+docker-compose -f docker-compose.prod.yml exec frankenphp php artisan migrate --force
 ```
 
 **Clear application cache:**
 ```bash
-docker-compose -f docker-compose.prod.yml exec app php artisan config:clear
-docker-compose -f docker-compose.prod.yml exec app php artisan route:clear
-docker-compose -f docker-compose.prod.yml exec app php artisan view:clear
+docker-compose -f docker-compose.prod.yml exec frankenphp php artisan config:clear
+docker-compose -f docker-compose.prod.yml exec frankenphp php artisan route:clear
+docker-compose -f docker-compose.prod.yml exec frankenphp php artisan view:clear
 ```
 
 **Optimize for production:**
 ```bash
-docker-compose -f docker-compose.prod.yml exec app php artisan config:cache
-docker-compose -f docker-compose.prod.yml exec app php artisan route:cache
-docker-compose -f docker-compose.prod.yml exec app php artisan view:cache
+docker-compose -f docker-compose.prod.yml exec frankenphp php artisan config:cache
+docker-compose -f docker-compose.prod.yml exec frankenphp php artisan route:cache
+docker-compose -f docker-compose.prod.yml exec frankenphp php artisan view:cache
+```
+
+**Restart Octane server:**
+```bash
+docker-compose -f docker-compose.prod.yml restart frankenphp
 ```
 
 **Stop services:**
@@ -234,8 +256,8 @@ docker-compose -f docker-compose.prod.yml down -v
 
 ### Production Services
 
-- **app**: PHP-FPM 8.4 with Laravel (optimized)
-- **nginx**: Web server (port 80/443)
+- **frankenphp**: FrankenPHP with Laravel Octane (port 8000, internal)
+- **caddy**: Caddy web server with HTTP/3 support (ports 80/443)
 - **node**: Node.js build service (runs once to build assets)
 - **db**: PostgreSQL 16 with health checks
 - **redis**: Redis 7 with password protection
@@ -255,6 +277,8 @@ docker-compose -f docker-compose.prod.yml down -v
 | `WORKOS_CLIENT_ID` | Your client ID | Production client ID | WorkOS client ID |
 | `WORKOS_API_KEY` | Your API key | Production API key | WorkOS API key |
 | `WORKOS_REDIRECT_URL` | `http://localhost:8000/authenticate` | `https://domain.com/authenticate` | WorkOS redirect URL |
+| `CADDY_DOMAIN` | N/A | `yourdomain.com` | Domain name for Caddy SSL (production) |
+| `CADDY_EMAIL` | N/A | `admin@example.com` | Email for Let's Encrypt notifications (production) |
 
 ### Optional Variables
 
@@ -264,6 +288,7 @@ docker-compose -f docker-compose.prod.yml down -v
 | `DB_PORT` | `5432` (dev) | Database port |
 | `REDIS_PORT` | `6379` | Redis port |
 | `REDIS_PASSWORD` | `null` (dev) | Redis password (required in prod) |
+| `OCTANE_SERVER` | `frankenphp` | Octane server type (frankenphp/swoole/roadrunner) |
 
 ## Important Notes
 
@@ -279,9 +304,12 @@ docker-compose -f docker-compose.prod.yml down -v
 ### SSL/HTTPS
 
 For production HTTPS:
-1. Place SSL certificates in `docker/nginx/ssl/cert.pem` and `docker/nginx/ssl/key.pem`
-2. Uncomment SSL configuration in `docker/nginx/prod.conf`
-3. Update `APP_URL` to `https://`
+1. Set `CADDY_DOMAIN` and `CADDY_EMAIL` in your `.env` file
+2. Caddy automatically obtains SSL certificates from Let's Encrypt
+3. HTTP/3 (QUIC) is automatically enabled
+4. Update `APP_URL` to `https://yourdomain.com`
+
+**Note:** Ensure ports 80 and 443 (TCP and UDP) are open in your firewall for Caddy to function properly.
 
 ## Troubleshooting
 
@@ -307,17 +335,38 @@ APP_PORT=8001
 
 **Development:**
 - Ensure Vite dev server is running: `docker-compose -f docker-compose.dev.yml ps node`
-- Check nginx proxy configuration
+- Check Caddy logs: `docker-compose -f docker-compose.dev.yml logs caddy`
+- Restart Caddy: `docker-compose -f docker-compose.dev.yml restart caddy`
 
 **Production:**
 - Rebuild assets: `docker-compose -f docker-compose.prod.yml up node --build`
+- Restart Caddy: `docker-compose -f docker-compose.prod.yml restart caddy`
 - Clear browser cache
+
+### HTTP/3 Verification
+
+To verify HTTP/3 is working:
+1. Use browser developer tools (Chrome: Network tab → Protocol column should show "h3")
+2. Visit https://tools.keycdn.com/http3-test
+3. Check Caddy logs: `docker-compose -f docker-compose.prod.yml logs caddy | grep http3`
+
+### Octane Worker Management
+
+Octane workers are managed automatically. To restart Octane:
+```bash
+docker-compose -f docker-compose.prod.yml restart frankenphp
+```
+
+To check Octane status:
+```bash
+docker-compose -f docker-compose.prod.yml exec frankenphp php artisan octane:status
+```
 
 ### Permission Issues
 
 ```bash
 # Fix storage permissions
-docker-compose -f docker-compose.dev.yml exec app chmod -R 755 storage bootstrap/cache
+docker-compose -f docker-compose.dev.yml exec frankenphp chmod -R 755 storage bootstrap/cache
 ```
 
 ### Redis Connection Issues
@@ -332,9 +381,13 @@ docker-compose -f docker-compose.dev.yml exec app chmod -R 755 storage bootstrap
 docker-compose -f docker-compose.dev.yml logs -f
 
 # Specific service
-docker-compose -f docker-compose.dev.yml logs -f app
-docker-compose -f docker-compose.dev.yml logs -f nginx
+docker-compose -f docker-compose.dev.yml logs -f frankenphp
+docker-compose -f docker-compose.dev.yml logs -f caddy
 docker-compose -f docker-compose.dev.yml logs -f node
+
+# Production services
+docker-compose -f docker-compose.prod.yml logs -f frankenphp
+docker-compose -f docker-compose.prod.yml logs -f caddy
 ```
 
 ## Updating Dependencies
@@ -343,10 +396,10 @@ docker-compose -f docker-compose.dev.yml logs -f node
 
 ```bash
 # Update Composer packages
-docker-compose -f docker-compose.dev.yml exec app composer update
+docker-compose -f docker-compose.dev.yml exec frankenphp composer update
 
 # Install new package
-docker-compose -f docker-compose.dev.yml exec app composer require vendor/package
+docker-compose -f docker-compose.dev.yml exec frankenphp composer require vendor/package
 ```
 
 ### Node Dependencies

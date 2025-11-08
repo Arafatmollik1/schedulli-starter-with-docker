@@ -1,0 +1,48 @@
+# Laravel Development Dockerfile with FrankenPHP and Octane
+FROM dunglas/frankenphp:latest
+
+# Accept build arguments for user ID and group ID
+ARG UID=1000
+ARG GID=1000
+
+# Install system dependencies and PHP extensions
+RUN install-php-extensions \
+    pdo_mysql \
+    pdo_pgsql \
+    zip \
+    mbstring \
+    intl \
+    opcache \
+    redis \
+    pcntl
+
+# Install Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Install Node.js and npm for development
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    nodejs \
+    npm \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create or modify www-data user to match host UID/GID
+RUN usermod -u ${UID} www-data && groupmod -g ${GID} www-data
+
+# Set working directory
+WORKDIR /var/www/html
+
+# Set ownership
+RUN chown -R www-data:www-data /var/www/html
+
+# Copy entrypoint script
+COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+USER www-data
+
+# Expose port 8000 (Octane will listen on this port)
+EXPOSE 8000
+
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+CMD ["php", "artisan", "octane:start", "--server=frankenphp", "--host=0.0.0.0", "--port=8000", "--watch"]
+

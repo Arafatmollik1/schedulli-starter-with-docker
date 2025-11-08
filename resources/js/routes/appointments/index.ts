@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../wayfinder'
 /**
 * @see \App\Http\Controllers\AppointmentController::index
-* @see app/Http/Controllers/AppointmentController.php:18
+* @see Http/Controllers/AppointmentController.php:18
 * @route '/api/appointments'
 */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\AppointmentController::index
-* @see app/Http/Controllers/AppointmentController.php:18
+* @see Http/Controllers/AppointmentController.php:18
 * @route '/api/appointments'
 */
 index.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ index.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\AppointmentController::index
-* @see app/Http/Controllers/AppointmentController.php:18
+* @see Http/Controllers/AppointmentController.php:18
 * @route '/api/appointments'
 */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -35,7 +35,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\AppointmentController::index
-* @see app/Http/Controllers/AppointmentController.php:18
+* @see Http/Controllers/AppointmentController.php:18
 * @route '/api/appointments'
 */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -45,7 +45,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\AppointmentController::index
-* @see app/Http/Controllers/AppointmentController.php:18
+* @see Http/Controllers/AppointmentController.php:18
 * @route '/api/appointments'
 */
 const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -55,7 +55,7 @@ const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => (
 
 /**
 * @see \App\Http\Controllers\AppointmentController::index
-* @see app/Http/Controllers/AppointmentController.php:18
+* @see Http/Controllers/AppointmentController.php:18
 * @route '/api/appointments'
 */
 indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -65,7 +65,7 @@ indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\AppointmentController::index
-* @see app/Http/Controllers/AppointmentController.php:18
+* @see Http/Controllers/AppointmentController.php:18
 * @route '/api/appointments'
 */
 indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -82,7 +82,7 @@ index.form = indexForm
 
 /**
 * @see \App\Http\Controllers\AppointmentController::index
-* @see app/Http/Controllers/AppointmentController.php:18
+* @see Http/Controllers/AppointmentController.php:18
 * @route '/appointments'
 */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -97,7 +97,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\AppointmentController::index
-* @see app/Http/Controllers/AppointmentController.php:18
+* @see Http/Controllers/AppointmentController.php:18
 * @route '/appointments'
 */
 index.url = (options?: RouteQueryOptions) => {
@@ -106,7 +106,7 @@ index.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\AppointmentController::index
-* @see app/Http/Controllers/AppointmentController.php:18
+* @see Http/Controllers/AppointmentController.php:18
 * @route '/appointments'
 */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -116,7 +116,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\AppointmentController::index
-* @see app/Http/Controllers/AppointmentController.php:18
+* @see Http/Controllers/AppointmentController.php:18
 * @route '/appointments'
 */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -126,7 +126,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\AppointmentController::index
-* @see app/Http/Controllers/AppointmentController.php:18
+* @see Http/Controllers/AppointmentController.php:18
 * @route '/appointments'
 */
 const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -136,7 +136,7 @@ const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => (
 
 /**
 * @see \App\Http\Controllers\AppointmentController::index
-* @see app/Http/Controllers/AppointmentController.php:18
+* @see Http/Controllers/AppointmentController.php:18
 * @route '/appointments'
 */
 indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -146,7 +146,7 @@ indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\AppointmentController::index
-* @see app/Http/Controllers/AppointmentController.php:18
+* @see Http/Controllers/AppointmentController.php:18
 * @route '/appointments'
 */
 indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -163,7 +163,7 @@ index.form = indexForm
 
 /**
 * @see \App\Http\Controllers\AppointmentController::store
-* @see app/Http/Controllers/AppointmentController.php:50
+* @see Http/Controllers/AppointmentController.php:50
 * @route '/api/appointments'
 */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -178,7 +178,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\AppointmentController::store
-* @see app/Http/Controllers/AppointmentController.php:50
+* @see Http/Controllers/AppointmentController.php:50
 * @route '/api/appointments'
 */
 store.url = (options?: RouteQueryOptions) => {
@@ -187,7 +187,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\AppointmentController::store
-* @see app/Http/Controllers/AppointmentController.php:50
+* @see Http/Controllers/AppointmentController.php:50
 * @route '/api/appointments'
 */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -197,7 +197,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
 /**
 * @see \App\Http\Controllers\AppointmentController::store
-* @see app/Http/Controllers/AppointmentController.php:50
+* @see Http/Controllers/AppointmentController.php:50
 * @route '/api/appointments'
 */
 const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -207,7 +207,7 @@ const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => 
 
 /**
 * @see \App\Http\Controllers\AppointmentController::store
-* @see app/Http/Controllers/AppointmentController.php:50
+* @see Http/Controllers/AppointmentController.php:50
 * @route '/api/appointments'
 */
 storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -219,7 +219,7 @@ store.form = storeForm
 
 /**
 * @see \App\Http\Controllers\AppointmentController::show
-* @see app/Http/Controllers/AppointmentController.php:34
+* @see Http/Controllers/AppointmentController.php:34
 * @route '/api/appointments/{appointment}'
 */
 export const show = (args: { appointment: string | number | { id: string | number } } | [appointment: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -234,7 +234,7 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\AppointmentController::show
-* @see app/Http/Controllers/AppointmentController.php:34
+* @see Http/Controllers/AppointmentController.php:34
 * @route '/api/appointments/{appointment}'
 */
 show.url = (args: { appointment: string | number | { id: string | number } } | [appointment: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
@@ -267,7 +267,7 @@ show.url = (args: { appointment: string | number | { id: string | number } } | [
 
 /**
 * @see \App\Http\Controllers\AppointmentController::show
-* @see app/Http/Controllers/AppointmentController.php:34
+* @see Http/Controllers/AppointmentController.php:34
 * @route '/api/appointments/{appointment}'
 */
 show.get = (args: { appointment: string | number | { id: string | number } } | [appointment: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -277,7 +277,7 @@ show.get = (args: { appointment: string | number | { id: string | number } } | [
 
 /**
 * @see \App\Http\Controllers\AppointmentController::show
-* @see app/Http/Controllers/AppointmentController.php:34
+* @see Http/Controllers/AppointmentController.php:34
 * @route '/api/appointments/{appointment}'
 */
 show.head = (args: { appointment: string | number | { id: string | number } } | [appointment: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -287,7 +287,7 @@ show.head = (args: { appointment: string | number | { id: string | number } } | 
 
 /**
 * @see \App\Http\Controllers\AppointmentController::show
-* @see app/Http/Controllers/AppointmentController.php:34
+* @see Http/Controllers/AppointmentController.php:34
 * @route '/api/appointments/{appointment}'
 */
 const showForm = (args: { appointment: string | number | { id: string | number } } | [appointment: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -297,7 +297,7 @@ const showForm = (args: { appointment: string | number | { id: string | number }
 
 /**
 * @see \App\Http\Controllers\AppointmentController::show
-* @see app/Http/Controllers/AppointmentController.php:34
+* @see Http/Controllers/AppointmentController.php:34
 * @route '/api/appointments/{appointment}'
 */
 showForm.get = (args: { appointment: string | number | { id: string | number } } | [appointment: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -307,7 +307,7 @@ showForm.get = (args: { appointment: string | number | { id: string | number } }
 
 /**
 * @see \App\Http\Controllers\AppointmentController::show
-* @see app/Http/Controllers/AppointmentController.php:34
+* @see Http/Controllers/AppointmentController.php:34
 * @route '/api/appointments/{appointment}'
 */
 showForm.head = (args: { appointment: string | number | { id: string | number } } | [appointment: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -324,7 +324,7 @@ show.form = showForm
 
 /**
 * @see \App\Http\Controllers\AppointmentController::show
-* @see app/Http/Controllers/AppointmentController.php:34
+* @see Http/Controllers/AppointmentController.php:34
 * @route '/appointments/{appointment}'
 */
 export const show = (args: { appointment: string | number | { id: string | number } } | [appointment: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -339,7 +339,7 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\AppointmentController::show
-* @see app/Http/Controllers/AppointmentController.php:34
+* @see Http/Controllers/AppointmentController.php:34
 * @route '/appointments/{appointment}'
 */
 show.url = (args: { appointment: string | number | { id: string | number } } | [appointment: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
@@ -372,7 +372,7 @@ show.url = (args: { appointment: string | number | { id: string | number } } | [
 
 /**
 * @see \App\Http\Controllers\AppointmentController::show
-* @see app/Http/Controllers/AppointmentController.php:34
+* @see Http/Controllers/AppointmentController.php:34
 * @route '/appointments/{appointment}'
 */
 show.get = (args: { appointment: string | number | { id: string | number } } | [appointment: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -382,7 +382,7 @@ show.get = (args: { appointment: string | number | { id: string | number } } | [
 
 /**
 * @see \App\Http\Controllers\AppointmentController::show
-* @see app/Http/Controllers/AppointmentController.php:34
+* @see Http/Controllers/AppointmentController.php:34
 * @route '/appointments/{appointment}'
 */
 show.head = (args: { appointment: string | number | { id: string | number } } | [appointment: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -392,7 +392,7 @@ show.head = (args: { appointment: string | number | { id: string | number } } | 
 
 /**
 * @see \App\Http\Controllers\AppointmentController::show
-* @see app/Http/Controllers/AppointmentController.php:34
+* @see Http/Controllers/AppointmentController.php:34
 * @route '/appointments/{appointment}'
 */
 const showForm = (args: { appointment: string | number | { id: string | number } } | [appointment: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -402,7 +402,7 @@ const showForm = (args: { appointment: string | number | { id: string | number }
 
 /**
 * @see \App\Http\Controllers\AppointmentController::show
-* @see app/Http/Controllers/AppointmentController.php:34
+* @see Http/Controllers/AppointmentController.php:34
 * @route '/appointments/{appointment}'
 */
 showForm.get = (args: { appointment: string | number | { id: string | number } } | [appointment: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -412,7 +412,7 @@ showForm.get = (args: { appointment: string | number | { id: string | number } }
 
 /**
 * @see \App\Http\Controllers\AppointmentController::show
-* @see app/Http/Controllers/AppointmentController.php:34
+* @see Http/Controllers/AppointmentController.php:34
 * @route '/appointments/{appointment}'
 */
 showForm.head = (args: { appointment: string | number | { id: string | number } } | [appointment: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -429,7 +429,7 @@ show.form = showForm
 
 /**
 * @see \App\Http\Controllers\AppointmentController::update
-* @see app/Http/Controllers/AppointmentController.php:61
+* @see Http/Controllers/AppointmentController.php:61
 * @route '/api/appointments/{appointment}'
 */
 export const update = (args: { appointment: string | number | { id: string | number } } | [appointment: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -444,7 +444,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\AppointmentController::update
-* @see app/Http/Controllers/AppointmentController.php:61
+* @see Http/Controllers/AppointmentController.php:61
 * @route '/api/appointments/{appointment}'
 */
 update.url = (args: { appointment: string | number | { id: string | number } } | [appointment: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
@@ -477,7 +477,7 @@ update.url = (args: { appointment: string | number | { id: string | number } } |
 
 /**
 * @see \App\Http\Controllers\AppointmentController::update
-* @see app/Http/Controllers/AppointmentController.php:61
+* @see Http/Controllers/AppointmentController.php:61
 * @route '/api/appointments/{appointment}'
 */
 update.put = (args: { appointment: string | number | { id: string | number } } | [appointment: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -487,7 +487,7 @@ update.put = (args: { appointment: string | number | { id: string | number } } |
 
 /**
 * @see \App\Http\Controllers\AppointmentController::update
-* @see app/Http/Controllers/AppointmentController.php:61
+* @see Http/Controllers/AppointmentController.php:61
 * @route '/api/appointments/{appointment}'
 */
 update.patch = (args: { appointment: string | number | { id: string | number } } | [appointment: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -497,7 +497,7 @@ update.patch = (args: { appointment: string | number | { id: string | number } }
 
 /**
 * @see \App\Http\Controllers\AppointmentController::update
-* @see app/Http/Controllers/AppointmentController.php:61
+* @see Http/Controllers/AppointmentController.php:61
 * @route '/api/appointments/{appointment}'
 */
 const updateForm = (args: { appointment: string | number | { id: string | number } } | [appointment: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -512,7 +512,7 @@ const updateForm = (args: { appointment: string | number | { id: string | number
 
 /**
 * @see \App\Http\Controllers\AppointmentController::update
-* @see app/Http/Controllers/AppointmentController.php:61
+* @see Http/Controllers/AppointmentController.php:61
 * @route '/api/appointments/{appointment}'
 */
 updateForm.put = (args: { appointment: string | number | { id: string | number } } | [appointment: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -527,7 +527,7 @@ updateForm.put = (args: { appointment: string | number | { id: string | number }
 
 /**
 * @see \App\Http\Controllers\AppointmentController::update
-* @see app/Http/Controllers/AppointmentController.php:61
+* @see Http/Controllers/AppointmentController.php:61
 * @route '/api/appointments/{appointment}'
 */
 updateForm.patch = (args: { appointment: string | number | { id: string | number } } | [appointment: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -544,7 +544,7 @@ update.form = updateForm
 
 /**
 * @see \App\Http\Controllers\AppointmentController::destroy
-* @see app/Http/Controllers/AppointmentController.php:72
+* @see Http/Controllers/AppointmentController.php:72
 * @route '/api/appointments/{appointment}'
 */
 export const destroy = (args: { appointment: string | number | { id: string | number } } | [appointment: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -559,7 +559,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\AppointmentController::destroy
-* @see app/Http/Controllers/AppointmentController.php:72
+* @see Http/Controllers/AppointmentController.php:72
 * @route '/api/appointments/{appointment}'
 */
 destroy.url = (args: { appointment: string | number | { id: string | number } } | [appointment: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
@@ -592,7 +592,7 @@ destroy.url = (args: { appointment: string | number | { id: string | number } } 
 
 /**
 * @see \App\Http\Controllers\AppointmentController::destroy
-* @see app/Http/Controllers/AppointmentController.php:72
+* @see Http/Controllers/AppointmentController.php:72
 * @route '/api/appointments/{appointment}'
 */
 destroy.delete = (args: { appointment: string | number | { id: string | number } } | [appointment: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -602,7 +602,7 @@ destroy.delete = (args: { appointment: string | number | { id: string | number }
 
 /**
 * @see \App\Http\Controllers\AppointmentController::destroy
-* @see app/Http/Controllers/AppointmentController.php:72
+* @see Http/Controllers/AppointmentController.php:72
 * @route '/api/appointments/{appointment}'
 */
 const destroyForm = (args: { appointment: string | number | { id: string | number } } | [appointment: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -617,7 +617,7 @@ const destroyForm = (args: { appointment: string | number | { id: string | numbe
 
 /**
 * @see \App\Http\Controllers\AppointmentController::destroy
-* @see app/Http/Controllers/AppointmentController.php:72
+* @see Http/Controllers/AppointmentController.php:72
 * @route '/api/appointments/{appointment}'
 */
 destroyForm.delete = (args: { appointment: string | number | { id: string | number } } | [appointment: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
