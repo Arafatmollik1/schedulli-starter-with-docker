@@ -13,7 +13,7 @@ steps:
       - echo "Frontend build completed"
 
   - name: deploy-to-production
-    image: docker:latest
+    image: alpine:latest
     environment:
       DEPLOY_HOST:
         from_secret: deploy_host
@@ -25,30 +25,50 @@ steps:
         from_secret: deploy_path
     commands:
       # Setup SSH
-      - apk add --no-cache openssh-client rsync git
+      - apk add --no-cache openssh-client rsync
       - mkdir -p ~/.ssh
       - echo "$DEPLOY_SSH_KEY" > ~/.ssh/id_rsa
       - chmod 600 ~/.ssh/id_rsa
-      - ssh-keyscan -H $DEPLOY_HOST >> ~/.ssh/known_hosts
+      - ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts
       
       # Deploy code to server
       - echo "Deploying to $DEPLOY_HOST:$DEPLOY_PATH"
-      # Stop containers to release file locks and allow permission changes
-      - echo "Stopping containers to release file locks..."
-      - ssh "$DEPLOY_USER@$DEPLOY_HOST" "cd $DEPLOY_PATH && docker compose -f docker-compose.prod.yml down 2>/dev/null || true"
-      # Remove public/build directory on server to avoid permission issues
-      # This ensures rsync can create it fresh with correct permissions
+      
+      # Stop containers
+      - echo "Stopping containers..."
+      - |
+        ssh "${DEPLOY_USER}@${DEPLOY_HOST}" \
+          "cd ${DEPLOY_PATH} && docker compose -f docker-compose.prod.yml down 2>/dev/null || true"
+      
+      # Clean up build directory
       - echo "Cleaning up public/build directory..."
-      - ssh "$DEPLOY_USER@$DEPLOY_HOST" "rm -rf $DEPLOY_PATH/public/build 2>/dev/null || true"
+      - |
+        ssh "${DEPLOY_USER}@${DEPLOY_HOST}" \
+          "rm -rf ${DEPLOY_PATH}/public/build 2>/dev/null || true"
+      
       # Sync files with rsync
       - echo "Syncing files to server..."
-      - rsync -avz --delete --exclude='.git' --exclude='node_modules' --exclude='storage/logs/*' --exclude='storage/framework/sessions/*' --exclude='storage/framework/cache/*' --exclude='.env' ./ "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH/"
+      - |
+        rsync -avz --delete \
+          --exclude='.git' \
+          --exclude='node_modules' \
+          --exclude='storage/logs/*' \
+          --exclude='storage/framework/sessions/*' \
+          --exclude='storage/framework/cache/*' \
+          --exclude='.env' \
+          ./ \
+          "${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PATH}/"
       
-      # Verify docker directory was synced
+      # Verify deployment files
       - echo "Verifying deployment files..."
-      - ssh "$DEPLOY_USER@$DEPLOY_HOST" "ls -la $DEPLOY_PATH/docker/entrypoint.sh"
+      - |
+        ssh "${DEPLOY_USER}@${DEPLOY_HOST}" \
+          "ls -la ${DEPLOY_PATH}/docker/entrypoint.sh"
       
-      # Run deployment commands on server (this will rebuild and start containers)
-      - ssh "$DEPLOY_USER@$DEPLOY_HOST" "cd $DEPLOY_PATH && ./deploy.sh"
+      # Run deployment script on server
+      - echo "Running deployment script..."
+      - |
+        ssh "${DEPLOY_USER}@${DEPLOY_HOST}" \
+          "cd ${DEPLOY_PATH} && ./deploy.sh"
       
       - echo "Deployment completed successfully!"
