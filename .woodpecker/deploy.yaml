@@ -13,7 +13,7 @@ steps:
       - echo "Frontend build completed"
 
   - name: deploy-to-production
-    image: alpine:latest
+    image: docker:latest
     environment:
       DEPLOY_HOST:
         from_secret: deploy_host
@@ -24,21 +24,15 @@ steps:
       DEPLOY_PATH:
         from_secret: deploy_path
     commands:
-      - apk add --no-cache openssh-client rsync
+      - apk add --no-cache openssh-client rsync git
       - mkdir -p ~/.ssh
       - echo "$DEPLOY_SSH_KEY" > ~/.ssh/id_rsa
       - chmod 600 ~/.ssh/id_rsa
-      - ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts
-      - |
-        ssh -o StrictHostKeyChecking=no "$DEPLOY_USER@$DEPLOY_HOST" "
-          cd $DEPLOY_PATH &&
-          docker compose -f docker-compose.prod.yml down 2>/dev/null || true &&
-          mkdir -p public/build
-        "
-      - rsync -avz --delete --exclude='.git' --exclude='node_modules' --exclude='storage/logs/*' --exclude='storage/framework/sessions/*' --exclude='storage/framework/cache/*' --exclude='.env' ./ "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH/"
-      - |
-        ssh -o StrictHostKeyChecking=no "$DEPLOY_USER@$DEPLOY_HOST" "
-          cd $DEPLOY_PATH &&
-          chmod +x deploy.sh &&
-          ./deploy.sh
-        "
+      - ssh-keyscan -H $DEPLOY_HOST >> ~/.ssh/known_hosts
+      
+      - echo "Deploying to $DEPLOY_HOST:$DEPLOY_PATH"
+      - rsync -avz --delete --exclude='.git' --exclude='node_modules' --exclude='storage/logs/*' --exclude='storage/framework/sessions/*' --exclude='storage/framework/cache/*' --exclude='.env' ./ $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH/
+      
+      - ssh $DEPLOY_USER@$DEPLOY_HOST "cd $DEPLOY_PATH && ./deploy.sh"
+      
+      - echo "Deployment completed successfully!"
