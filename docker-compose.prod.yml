@@ -9,8 +9,10 @@ services:
     networks:
       - schedulli_network
     depends_on:
-      - db
-      - redis
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     environment:
       - APP_ENV=production
       - APP_DEBUG=false
@@ -106,9 +108,12 @@ services:
     networks:
       - schedulli_network
     depends_on:
-      - frankenphp
-      - db
-      - redis
+      frankenphp:
+        condition: service_started
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     environment:
       - APP_ENV=production
       - APP_DEBUG=false
@@ -139,9 +144,12 @@ services:
     networks:
       - schedulli_network
     depends_on:
-      - frankenphp
-      - db
-      - redis
+      frankenphp:
+        condition: service_started
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     environment:
       - APP_ENV=production
       - APP_DEBUG=false

@@ -3,21 +3,48 @@ set -e
 
 # Wait for database to be ready
 echo "Waiting for database..."
+DB_HOST="${DB_HOST:-db}"
+DB_PORT="${DB_PORT:-5432}"
+DB_USERNAME="${DB_USERNAME:-postgres}"
+DB_PASSWORD="${DB_PASSWORD:-postgres}"
+DB_DATABASE="${DB_DATABASE:-postgres}"
+
+# First wait for PostgreSQL to accept connections (using postgres database)
 until php -r "
 try {
     \$pdo = new PDO(
-        'pgsql:host=${DB_HOST:-db};port=${DB_PORT:-5432}',
-        '${DB_USERNAME:-postgres}',
-        '${DB_PASSWORD:-postgres}'
+        'pgsql:host=${DB_HOST};port=${DB_PORT};dbname=postgres',
+        '${DB_USERNAME}',
+        '${DB_PASSWORD}'
     );
     \$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    echo 'Database is ready!' . PHP_EOL;
+    echo 'Database server is ready!' . PHP_EOL;
     exit(0);
 } catch (PDOException \$e) {
     exit(1);
 }
 " 2>/dev/null; do
     echo "Database is unavailable - sleeping"
+    sleep 2
+done
+
+# Then verify the actual database exists
+echo "Verifying database '${DB_DATABASE}' exists..."
+until php -r "
+try {
+    \$pdo = new PDO(
+        'pgsql:host=${DB_HOST};port=${DB_PORT};dbname=${DB_DATABASE}',
+        '${DB_USERNAME}',
+        '${DB_PASSWORD}'
+    );
+    \$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    echo 'Database \"${DB_DATABASE}\" is ready!' . PHP_EOL;
+    exit(0);
+} catch (PDOException \$e) {
+    exit(1);
+}
+" 2>/dev/null; do
+    echo "Database '${DB_DATABASE}' is not ready yet - sleeping"
     sleep 2
 done
 
